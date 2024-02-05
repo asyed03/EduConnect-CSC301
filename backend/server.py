@@ -15,6 +15,7 @@ def create_server():
 def add_endpoints(server: Flask, request_manager: RequestManager):
     server.add_url_rule("/", "/", methods=["GET"], view_func=request_manager.get_index)
     server.add_url_rule("/login", "login", methods=["POST"], view_func=request_manager.post_login)
+    server.add_url_rule("/register", "register", methods=["POST"], view_func=request_manager.post_register)
 
 
 if __name__ == "__main__":

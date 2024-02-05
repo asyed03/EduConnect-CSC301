@@ -1,19 +1,21 @@
 import { useState } from 'react'
-import "../styles/Login.scss"
-import { Link } from 'react-router-dom';
+import "../styles/Register.scss"
+import { Link } from "react-router-dom"
 
-function Login() {
+function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-  async function loginPost(event) {
+  async function registerPost(event) {
     event.preventDefault();
     const body = {
       "email": email,
-      "password": password
+      "password": password,
+      "confirmPassword": confirmPassword
     };
 
-    const response = await fetch("http://127.0.0.1:8001/login", {
+    const response = await fetch("http://127.0.0.1:8001/register", {
       method: "POST",
       body: JSON.stringify(body),
       headers: {
@@ -27,27 +29,27 @@ function Login() {
 
   return (
     <>
-      <div className="login-main">
-        <div className='login-left'>
-            <h2>Sign In</h2>
-            <p>Sign in to your account.</p>
+      <div className="register-main">
+        <div className='register-left'>
+            <h2>Sign Up</h2>
+            <p>Create your profile.</p>
 
-            <form onSubmit={loginPost}>
+            <form onSubmit={registerPost}>
                 <input type="email" name="email" id="email" placeholder='Email Address' value={email} onChange={(e) => setEmail(e.target.value)} />
                 <input type="password" name="password" id="password" placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)} />
+                <input type="confirmPassword" name="confirmPassword" placeholder='Confirm Password' value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
 
-                <a href="/" className='forgot'>Forgot Password?</a>
-                <input type="submit" value="SIGN IN" />
-                <div className="sign-up">
-                  <p>Don't have an account?</p>
-                  <Link to="/register">
-                    <a>SIGN UP</a>
+                <input type="submit" value="SIGN UP" />
+                <div className="sign-in">
+                  <p>Already have an account?</p>
+                  <Link to="/login">
+                    <a>SIGN IN</a>
                   </Link>
                 </div>
             </form>
 
         </div>
-        <div className='login-right'>
+        <div className='register-right'>
             <div className="catchphrase">
                 <h1>Engage with your <br/>peers in one place.</h1>
                 <p>Lorem ipsum dolor sit amet.</p>
@@ -58,4 +60,4 @@ function Login() {
   )
 }
 
-export default Login
+export default Register
