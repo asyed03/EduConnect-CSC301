@@ -83,11 +83,13 @@ class RequestManager(object):
         Handle a GET request for an announcement.
         :return: The announcement message
         """
+        announcement = DatabaseManager.instance().get_announcement(id)
 
-        # TODO: return announcement info
-        # DatabaseManager.instance().get_announcement(id)
+        if announcement is None:
+            return self._respond(status_code=404)
+
         body = {
-            "message": "announcement " + id, 
+            "message": announcement.get_message()
         }
 
         return self._respond(status_code=200, body=body)
@@ -122,22 +124,20 @@ class RequestManager(object):
 
         return self._respond(status_code=200, body=body)
     
-    def post_announcements(self):
+    def post_announcement(self):
         """
         Handle a POST request for announcements.
         :return: A list of announcements
         """
 
         data = request.get_json()
-        # TODO: post announcement for the given groups
-        # for course in data.get('courses'): DatabaseManager.instance().post_announcements(course, course.get('announcements'))
-        body = {
-            "messsage": "posted announcement for courses " + data.get('courses')
-        }
+        announcement = DatabaseManager.instance().post_announcement(data["group"], data["poster"], data["message"])
+        if announcement is None:
+            return self._respond(status_code=500)
 
-        return self._respond(status_code=200, body=body)
+        return self._respond(status_code=200)
     
-    def delete_announcements(self):
+    def delete_announcement(self):
         """
         Handle a POST request for announcements.
         :return: A list of announcements

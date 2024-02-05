@@ -2,23 +2,23 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
+import Announcements from "./routes/announcements.jsx";
+import Register from './routes/register.jsx'
 import Index from "./routes/index.jsx";
 import Login from "./routes/login.jsx";
 import ErrorPage from "./error-page.jsx";
-import Announcements from "./routes/announcements.jsx";
-import Register from './routes/register.jsx'
 
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Index />,
-    errorElement: <ErrorPage />,
+    errorElement: <ErrorPage />
   },
   {
     path: "/login",
     element: <Login />,
-    errorElement: <ErrorPage />,
+    errorElement: <ErrorPage />
   },
   {
     path: "/register",
@@ -28,8 +28,8 @@ const router = createBrowserRouter([
   {
     path: "/announcements",
     element: <Announcements />,
-    errorElement: <ErrorPage />,
-  },
+    errorElement: <ErrorPage />
+  }
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
