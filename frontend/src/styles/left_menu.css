@@ -1,0 +1,62 @@
+.group,
+.group * {
+  box-sizing: border-box;
+}
+.group {
+  width: 101px;
+  height: 987px;
+  position: relative;
+  overflow: visible;
+}
+.frame-5,
+.frame-5 * {
+  box-sizing: border-box;
+}
+.frame-5 {
+  width: 102px;
+  height: 987px;
+  position: relative;
+}
+.group {
+  height: auto;
+  position: absolute;
+  right: 0.98%;
+  left: 0%;
+  width: 99.02%;
+  bottom: 0%;
+  top: 0%;
+  height: 100%;
+  overflow: visible;
+}
+.group-799 {
+  height: auto;
+  position: absolute;
+  left: 38.59px;
+  top: 90.76px;
+  overflow: visible;
+}
+.group-795 {
+  height: auto;
+  position: absolute;
+  left: 35px;
+  top: 195px;
+  overflow: visible;
+}
+.group-794 {
+  height: auto;
+  position: absolute;
+  left: 35.92px;
+  top: 308.98px;
+  overflow: visible;
+}
+.rectangle-3 {
+  height: auto;
+  position: absolute;
+  right: 0%;
+  left: 94.12%;
+  width: 5.88%;
+  bottom: 87.5%;
+  top: 8.54%;
+  height: 3.96%;
+  overflow: visible;
+}

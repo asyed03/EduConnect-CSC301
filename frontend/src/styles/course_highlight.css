@@ -1,0 +1,74 @@
+.course-highlight,
+.course-highlight * {
+  box-sizing: border-box;
+}
+.course-highlight {
+  height: 176.25px;
+  position: static;
+}
+.rectangle-131 {
+  opacity: 0.4300000071525574;
+  height: auto;
+  position: absolute;
+  right: 61.98%;
+  left: 7.4%;
+  width: 30.63%;
+  bottom: 64.43%;
+  top: 19.25%;
+  height: 16.32%;
+  overflow: visible;
+}
+.group-136 {
+  width: 106px;
+  height: 105.54px;
+  position: absolute;
+  right: 85.57%;
+  left: 8.91%;
+  width: 5.52%;
+  bottom: 67.75%;
+  top: 22.48%;
+  height: 9.77%;
+  overflow: visible;
+}
+.group-137 {
+  width: 132px;
+  height: 81.27px;
+  position: static;
+}
+.csc-301 {
+  color: #070220;
+  text-align: left;
+  font-family: "Poppins-Medium", sans-serif;
+  font-size: 27px;
+  font-weight: 500;
+  position: absolute;
+  right: 77.24%;
+  left: 15.89%;
+  width: 6.88%;
+  bottom: 72.34%;
+  top: 23.65%;
+  height: 4.01%;
+}
+._180-enrolled {
+  color: #070220;
+  text-align: left;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  position: absolute;
+  right: 78.54%;
+  left: 15.89%;
+  width: 5.57%;
+  bottom: 68.83%;
+  top: 28.54%;
+  height: 2.64%;
+}
+.back {
+  opacity: 0.5;
+  width: 13.59px;
+  height: 26.63px;
+  position: absolute;
+  left: 673.42px;
+  top: 282.49px;
+  overflow: visible;
+}
