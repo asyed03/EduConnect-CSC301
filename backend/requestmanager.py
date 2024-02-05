@@ -40,3 +40,31 @@ class RequestManager(object):
             "message": "The username or password were incorrect. Please try again."
         }
         return self._respond(status_code=401, body=body)
+
+    def post_register(self):
+        """
+        Handle a POST request for a register attempt.
+        :return: Whether the register was successful or not
+        """
+        data = request.get_json()
+
+        if data["email"] == "":
+            body = {
+                "message": "Invalid email. Please try again."
+            }
+            return self._respond(status_code=401, body=body)
+
+        if data["password"] == "":
+            body = {
+                "message": "Invalid password. Please try again."
+            }
+            return self._respond(status_code=401, body=body)
+
+        if data["confirmPassword"] != data["password"]:
+            body = {
+                "message": "Passwords do not match. Please try again."
+            }
+            return self._respond(status_code=401, body=body)
+
+        # TODO: Update database
+        return self._respond(status_code=200)
