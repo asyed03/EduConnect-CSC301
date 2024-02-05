@@ -1,0 +1,52 @@
+.left-menu {
+  width: 60px;
+  height: 100vh;
+  background-color: #f0f0f0;
+  position: fixed;
+  top: 0px;
+  transition: width 0.3s ease;
+  z-index: 50;
+}
+
+.left-menu.expanded {
+  width: 200px;
+}
+
+.hamburger-menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 2rem;
+  height: 2rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 20px;
+}
+
+.hamburger-menu span {
+  width: 2rem;
+  height: 0.25rem;
+  background: #333;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 10px;
+}
+
+.menu-item svg {
+  margin-right: 10px;
+  height: 70px;
+  fill:#646cff;
+  /* Add specific styles for the SVG icons here */
+}
+
+.menu-item span {
+  display: none;
+}
+
+.left-menu.expanded .menu-item span {
+  display: inline;
+}

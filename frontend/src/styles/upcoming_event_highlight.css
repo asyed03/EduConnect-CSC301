@@ -1,0 +1,43 @@
+.upcoming-event {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #e0f7fa;
+  border-radius: 25px;
+  margin-bottom: 10px;
+}
+
+.upcoming-event .icon img{
+  width: 50px;
+  height: 50px;
+  /* Style your icon here */
+}
+
+.upcoming-event .info {
+  flex-grow: 1;
+  margin-left: 10px;
+}
+
+.upcoming-event .info h3 {
+  font-size: 20px;
+  margin-bottom: 5px;
+}
+
+.upcoming-event .info p {
+  font-size: 16px;
+  color: gray;
+}
+
+.upcoming-event button {
+  padding: 10px 20px;
+  background-color: #00bcd4;
+  color: white;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+}
+
+.upcoming-event button:hover {
+  background-color: #008c9e;
+}
