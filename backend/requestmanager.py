@@ -77,3 +77,77 @@ class RequestManager(object):
             "message": "That username or email is already in use. Please use a different one."
         }
         return self._respond(status_code=401, body=body)
+
+    def get_announcement(self, id):
+        """
+        Handle a GET request for an announcement.
+        :return: The announcement message
+        """
+        announcement = DatabaseManager.instance().get_announcement(id)
+
+        if announcement is None:
+            return self._respond(status_code=404)
+
+        body = {
+            "message": announcement.get_message()
+        }
+
+        return self._respond(status_code=200, body=body)
+    
+    def get_announcements(self):
+        """
+        Handle a GET request for a list of announcements.
+        :return: A list of announcements
+        """
+
+        # TODO: return announcement info
+        # DatabaseManager.instance().get_announcements(data.get('announcements'))
+        body = {
+            "1": "announcement 1", 
+            "2": "announcement 2", 
+            "3": "announcement 3", 
+        }
+
+        return self._respond(status_code=200, body=body)
+    
+    def get_course_announcements(self):
+        """
+        Handle a GET request for announcements for a given course.
+        :return: A list of announcements for the given course
+        """
+
+        # TODO: return announcement info for enrolled groups from the database
+        # DatabaseManager.instance().get_course_announcements(data.get('course'))
+        body = {
+            "course1": ["announcement1 for course1", "announcement2 for course1", "announcement3 for course1"], 
+        }
+
+        return self._respond(status_code=200, body=body)
+    
+    def post_announcement(self):
+        """
+        Handle a POST request for announcements.
+        :return: A list of announcements
+        """
+
+        data = request.get_json()
+        announcement = DatabaseManager.instance().post_announcement(data["group"], data["poster"], data["message"])
+        if announcement is None:
+            return self._respond(status_code=500)
+
+        return self._respond(status_code=200)
+    
+    def delete_announcement(self):
+        """
+        Handle a POST request for announcements.
+        :return: A list of announcements
+        """
+
+        data = request.get_json()
+        # TODO: post announcement for the given groups
+        # DatabaseManager.instance().delete_announcements(data.get('announcements'))
+        body = {
+            "messsage": "deleted announcements with ids " + data.get('announcements')
+        }
+
+        return self._respond(status_code=200, body=body)

@@ -17,6 +17,15 @@ CREATE TABLE IF NOT EXISTS edu_group (
     PRIMARY KEY(id)
 );
 
+CREATE TABLE IF NOT EXISTS announcement (
+    id serial NOT NULL,
+    poster_id integer NOT NULL REFERENCES edu_user(id),
+    group_id integer NOT NULL REFERENCES edu_group(id),
+    message text NOT NULL,
+    date timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY(id)
+);
+
 CREATE TABLE IF NOT EXISTS group_member (
     group_id integer NOT NULL REFERENCES edu_group(id),
     member_id integer NOT NULL REFERENCES edu_user(id),
