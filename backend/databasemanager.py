@@ -1,4 +1,5 @@
 import psycopg2 as pg
+from user import User
 
 
 class DatabaseManager(object):
@@ -37,7 +38,7 @@ class DatabaseManager(object):
             self.connection.commit()
 
     def _setup_database(self):
-        self._clear_database()
+        # self._clear_database()
         cursor, schema_file = None, None
 
         try:
@@ -56,11 +57,40 @@ class DatabaseManager(object):
             if schema_file:
                 schema_file.close()
 
-    def get_student(self, identifier: int):
+    def register_user(self, email: str, username: str, password: str) -> User | None:
         """
-        Get a student with the given identifier.
-        :param identifier: The identifier of the student
-        :return: The User object for the student, or None if not found
+        Register a new user into the database.
+        :param password: The user's password
+        :param username: The user's username
+        :param email: The user's email
+        :return: The User object if the registration was successful, None otherwise
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("INSERT INTO edu_user(username, email, password) VALUES(%s, %s, %s) RETURNING id;",
+                           [username, email, password])
+
+            new_id = cursor.fetchone()
+            if new_id[0] <= 0:
+                return None
+
+            self.connection.commit()
+            print("Created user with ID: " + str(new_id[0]))
+            return User(new_id[0], email, username, password)
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return None
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
+    def get_user(self, identifier: int) -> User | None:
+        """
+        Get a user with the given identifier.
+        :param identifier: The identifier of the user
+        :return: Object for the user, or None if not found
         """
         cursor = None
         try:
@@ -68,14 +98,13 @@ class DatabaseManager(object):
             cursor.execute("SELECT * FROM edu_user WHERE id = %s", [identifier])
             if cursor.rowcount <= 0:
                 return None
+
+            for record in cursor:
+                user = User(int(record[0]), record[2], record[1], record[3])
+                return user
         except pg.Error as ex:
-            raise ex
+            print(ex)
+            return None
         finally:
             if cursor and not cursor.closed:
                 cursor.close()
-
-    def get_instructor(self, identifier: int):
-        pass
-
-    def get_group(self, identifier: int):
-        pass
