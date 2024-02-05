@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import "../styles/Register.scss"
+import { Link } from "react-router-dom"
 
 function Register() {
   const [email, setEmail] = useState("");
@@ -41,7 +42,9 @@ function Register() {
                 <input type="submit" value="SIGN UP" />
                 <div className="sign-in">
                   <p>Already have an account?</p>
-                  <a href="/">SIGN IN</a>
+                  <Link to="/login">
+                    <a>SIGN IN</a>
+                  </Link>
                 </div>
             </form>
 
