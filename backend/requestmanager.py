@@ -32,14 +32,49 @@ class RequestManager(object):
         Handle a POST request for a login attempt.
         :return: Whether the login was successful or not
         """
-        # TODO: Check database
-
         data = request.get_json()
-        if data["password"] == "test" and data["email"] == "test@test.com":
+        user = DatabaseManager.instance().login_user(data["email"], data["password"])
+
+        if user is None:
+            body = {
+                "message": "The username or password were incorrect. Please try again."
+            }
+            return self._respond(status_code=401, body=body)
+
+        return self._respond(status_code=200)
+
+    def post_register(self):
+        """
+        Handle a POST request for a register attempt.
+        :return: Whether the register was successful or not
+        """
+        data = request.get_json()
+
+        if data["email"] == "":
+            body = {
+                "message": "Invalid email. Please try again."
+            }
+            return self._respond(status_code=401, body=body)
+
+        if data["password"] == "":
+            body = {
+                "message": "Invalid password. Please try again."
+            }
+            return self._respond(status_code=401, body=body)
+
+        if data["confirmPassword"] != data["password"]:
+            body = {
+                "message": "Passwords do not match. Please try again."
+            }
+            return self._respond(status_code=401, body=body)
+
+        new_user = DatabaseManager.instance().register_user(data["email"], data["email"], data["password"])
+
+        if new_user is not None:
             return self._respond(status_code=200)
 
         body = {
-            "message": "The username or password were incorrect. Please try again."
+            "message": "That username or email is already in use. Please use a different one."
         }
         return self._respond(status_code=401, body=body)
 

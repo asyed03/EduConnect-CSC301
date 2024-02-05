@@ -86,6 +86,30 @@ class DatabaseManager(object):
             if cursor and not cursor.closed:
                 cursor.close()
 
+    def login_user(self, email: str, password: str) -> User | None:
+        """
+        Attempt to retrieve a user with the given email and password, and return it if it exists.
+        :param email: The user's email
+        :param password: The user's password
+        :return: The User if they exist, None otherwise
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT * FROM edu_user WHERE email = %s AND password = %s", [email, password])
+            if cursor.rowcount <= 0:
+                return None
+
+            for record in cursor:
+                user = User(int(record[0]), record[2], record[1], record[3])
+                return user
+        except pg.Error as ex:
+            print(ex)
+            return None
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
     def get_user(self, identifier: int) -> User | None:
         """
         Get a user with the given identifier.
