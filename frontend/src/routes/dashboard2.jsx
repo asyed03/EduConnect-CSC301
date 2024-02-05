@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import  Menu  from "../components/menu";
-import { LeftMenu } from "../components/left_menu";
+import  LeftMenu  from "../components/left_menu";
 import { CourseHighlight } from "../components/course_highlight";
 import { UpcomingEvents } from "../components/upcoming_event_highlight";
 

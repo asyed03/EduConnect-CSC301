@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import  Menu  from "../components/menu";
-import { LeftMenu } from "../components/left_menu";
+import  LeftMenu  from "../components/left_menu";
 
 const CourseView = () => {
   const { courseId } = useParams();

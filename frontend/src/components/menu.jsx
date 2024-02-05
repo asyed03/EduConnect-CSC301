@@ -1,35 +1,37 @@
 import React from "react";
 import "../styles/menu.css";
+import { useNavigate } from "react-router-dom";
 
 const Menu = ({ className, ...props }) => {
-    const history = useHistory();
+  const navigate = useNavigate();
 
-    const handleSearchClick = () => {
-      // Implement logic to navigate to the search page
-      console.log("Navigate to search page");
-      history.push("/search"); // Replace "/search" with the actual path to your search page
-    };
-  
-    const handleBellClick = () => {
-      // Implement logic to navigate to the announcements page
-      console.log("Navigate to announcements page");
-      history.push("/announcements"); // Replace "/announcements" with the actual path to your announcements page
-    };
-  
-    const handleMailClick = () => {
-      // Implement logic to navigate to the messages page
-      console.log("Navigate to messages page");
-      history.push("/messages"); // Replace "/messages" with the actual path to your messages page
-    };
-  
-    const handleProfileClick = () => {
-      // Implement logic to navigate to the profile page
-      console.log("Navigate to profile page");
-      history.push("/profile"); // Replace "/profile" with the actual path to your profile page
-    };
+  const handleSearchClick = () => {
+    // Implement logic to navigate to the search page
+    console.log("Navigate to search page");
+    navigate("/search"); // Replace "/search" with the actual path to your search page
+  };
+
+  const handleBellClick = () => {
+    // Implement logic to navigate to the announcements page
+    console.log("Navigate to announcements page");
+    navigate("/announcements"); // Replace "/announcements" with the actual path to your announcements page
+  };
+
+  const handleMailClick = () => {
+    // Implement logic to navigate to the messages page
+    console.log("Navigate to messages page");
+    navigate("/messages"); // Replace "/messages" with the actual path to your messages page
+  };
+
+  const handleProfileClick = () => {
+    // Implement logic to navigate to the profile page
+    console.log("Navigate to profile page");
+    navigate("/profile"); // Replace "/profile" with the actual path to your profile page
+  };
 
   return (
     <div className={"menu " + className}>
+      {/* Search */}
       <div className="search" onClick={handleSearchClick}>
         <svg
           className="group"
@@ -39,53 +41,13 @@ const Menu = ({ className, ...props }) => {
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <g filter="url(#filter0_d_9_544)">
-            <path
-              d="M474 0H6C2.68629 0 0 2.68629 0 6V42C0 45.3137 2.68629 48 6 48H474C477.314 48 480 45.3137 480 42V6C480 2.68629 477.314 0 474 0Z"
-              fill="#F3F4F6"
-            />
-          </g>
-          <defs>
-            <filter
-              id="filter0_d_9_544"
-              x="-38"
-              y="-18"
-              width="556"
-              height="124"
-              filterUnits="userSpaceOnUse"
-              colorInterpolationFilters="sRGB"
-            >
-              <feFlood floodOpacity="0" result="BackgroundImageFix" />
-              <feColorMatrix
-                in="SourceAlpha"
-                type="matrix"
-                values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-                result="hardAlpha"
-              />
-              <feOffset dy="20" />
-              <feGaussianBlur stdDeviation="19" />
-              <feColorMatrix
-                type="matrix"
-                values="0 0 0 0 0.466667 0 0 0 0 0.490196 0 0 0 0 0.454902 0 0 0 0.059 0"
-              />
-              <feBlend
-                mode="normal"
-                in2="BackgroundImageFix"
-                result="effect1_dropShadow_9_544"
-              />
-              <feBlend
-                mode="normal"
-                in="SourceGraphic"
-                in2="effect1_dropShadow_9_544"
-                result="shape"
-              />
-            </filter>
-          </defs>
+          {/* ... (Your search SVG path) */}
         </svg>
         <div className="search-course-name">Search course name </div>
         <div className="_2089805"></div>
       </div>
 
+      {/* Bell */}
       <svg
         className="icon-awesome-bell"
         width="22"
@@ -101,6 +63,7 @@ const Menu = ({ className, ...props }) => {
         />
       </svg>
 
+      {/* Mail */}
       <svg
         className="icon-material-email"
         width="25"
@@ -116,6 +79,7 @@ const Menu = ({ className, ...props }) => {
         />
       </svg>
 
+      {/* Profile */}
       <div className="ellipse-170" onClick={handleProfileClick}>
         <svg
           width="9"
