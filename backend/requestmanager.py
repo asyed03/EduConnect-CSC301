@@ -1,5 +1,6 @@
 from flask import Flask, request
 import json
+from databasemanager import DatabaseManager
 
 
 class RequestManager(object):
@@ -32,6 +33,7 @@ class RequestManager(object):
         :return: Whether the login was successful or not
         """
         # TODO: Check database
+
         data = request.get_json()
         if data["password"] == "test" and data["email"] == "test@test.com":
             return self._respond(status_code=200)
