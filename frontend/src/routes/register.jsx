@@ -6,6 +6,7 @@ function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   async function registerPost(event) {
     event.preventDefault();
@@ -24,6 +25,15 @@ function Register() {
     });
 
     const res = response.status;
+    const json = await response.json();
+
+    if (res != 200) {
+      setErrorMessage(json.message);
+    }
+    else {
+      setErrorMessage("");
+    }
+
     console.log("POST: ", res)
   }
 
@@ -33,6 +43,8 @@ function Register() {
         <div className='register-left'>
             <h2>Sign Up</h2>
             <p>Create your profile.</p>
+
+            <p className="error-message">{errorMessage}</p>
 
             <form onSubmit={registerPost}>
                 <input type="email" name="email" id="email" placeholder='Email Address' value={email} onChange={(e) => setEmail(e.target.value)} />

@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   async function loginPost(event) {
     event.preventDefault();
@@ -22,6 +23,15 @@ function Login() {
     });
 
     const res = response.status;
+    const json = await response.json();
+
+    if (res != 200) {
+      setErrorMessage(json.message);
+    }
+    else {
+      setErrorMessage("");
+    }
+
     console.log("POST: ", res)
   }
 
@@ -31,6 +41,8 @@ function Login() {
         <div className='login-left'>
             <h2>Sign In</h2>
             <p>Sign in to your account.</p>
+
+            <p className="error-message">{errorMessage}</p>
 
             <form onSubmit={loginPost}>
                 <input type="email" name="email" id="email" placeholder='Email Address' value={email} onChange={(e) => setEmail(e.target.value)} />

@@ -32,16 +32,16 @@ class RequestManager(object):
         Handle a POST request for a login attempt.
         :return: Whether the login was successful or not
         """
-        # TODO: Check database
-
         data = request.get_json()
-        if data["password"] == "test" and data["email"] == "test@test.com":
-            return self._respond(status_code=200)
+        user = DatabaseManager.instance().login_user(data["email"], data["password"])
 
-        body = {
-            "message": "The username or password were incorrect. Please try again."
-        }
-        return self._respond(status_code=401, body=body)
+        if user is None:
+            body = {
+                "message": "The username or password were incorrect. Please try again."
+            }
+            return self._respond(status_code=401, body=body)
+
+        return self._respond(status_code=200)
 
     def post_register(self):
         """
@@ -68,5 +68,12 @@ class RequestManager(object):
             }
             return self._respond(status_code=401, body=body)
 
-        # TODO: Update database
-        return self._respond(status_code=200)
+        new_user = DatabaseManager.instance().register_user(data["email"], data["email"], data["password"])
+
+        if new_user is not None:
+            return self._respond(status_code=200)
+
+        body = {
+            "message": "That username or email is already in use. Please use a different one."
+        }
+        return self._respond(status_code=401, body=body)
