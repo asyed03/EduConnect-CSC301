@@ -3,8 +3,83 @@
   box-sizing: border-box;
 }
 .course-highlight {
+  margin : 5px;
+  height: 116px;
+  width: 90%;
+  position: relative;
+  background-color: #F3E3E6;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: stretch;
+  align-content: stretch;
+  flex-wrap: nowrap;
+  padding: 15px;
+  overflow: hidden;
+  border-radius: 15px;
+}
+.course-highlight .course-highlight-image {
+  flex: 0 0 auto;
+  position: relative;
+  background-color: #f1f1f1;
+}
+.course-highlight .course-highlight-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.course-highlight .course-highlight-info {
+  flex: 1 1 auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  align-content: stretch;
+  flex-wrap: nowrap;
+  padding: 0px;
+  margin-left: 10px;
+}
+.course-highlight .course-highlight-info .course-highlight-title {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin: 0 0 5px 0;
+  line-height: 1.2;
+}
+.course-highlight .course-highlight-info .course-highlight-subtitle {
+  font-size: 1rem;
+  font-weight: 400;
+  margin: 0 0 5px 0;
+  line-height: 1.2;
+}
+.course-highlight .course-highlight-info .course-highlight-description {
+  font-size: 0.8rem;
+  font-weight: 400;
+  margin: 0 0 5px 0;
+  line-height: 1.2;
+}
+.course-highlight .course-highlight-info .course-highlight-cta {
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin: 0 0 5px 0;
+  line-height: 1.2;
+  text-transform: uppercase;
+  display: inline-block;
+  border-radius: 2px;
+  padding: 5px 10px;
+  background-color: #f1f1f1;
+  color: #333;
+  text-decoration: none;
+  transition: all 0.3s ease-in-out;
+}
+.course-highlight .course-highlight-info .course-highlight-cta:hover {
+  background-color: #333;
+  color: #f1f1f1;
+}
+
+.course_highlight_info {
   height: 176.25px;
-  position: static;
+  position: relative;
 }
 .rectangle-131 {
   opacity: 0.4300000071525574;
@@ -71,4 +146,37 @@
   left: 673.42px;
   top: 282.49px;
   overflow: visible;
+}
+
+.course-highlight {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+}
+
+.course-image {
+  width: 50px;
+}
+
+.course-info {
+  flex-grow: 1;
+  margin-left: 10px;
+}
+
+.course-info h3 {
+  font-size: 20px;
+  margin-bottom: 5px;
+}
+
+.course-info p {
+  font-size: 16px;
+  color: gray;
+}
+
+.arrow {
+  font-size: 20px;
+  color: gray;
 }

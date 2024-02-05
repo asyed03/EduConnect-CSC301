@@ -1,62 +1,52 @@
-.group,
-.group * {
-  box-sizing: border-box;
+.left-menu {
+  width: 60px;
+  height: 100vh;
+  background-color: #f0f0f0;
+  position: fixed;
+  top: 0px;
+  transition: width 0.3s ease;
+  z-index: 50;
 }
-.group {
-  width: 101px;
-  height: 987px;
-  position: relative;
-  overflow: visible;
+
+.left-menu.expanded {
+  width: 200px;
 }
-.frame-5,
-.frame-5 * {
-  box-sizing: border-box;
+
+.hamburger-menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 2rem;
+  height: 2rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 20px;
 }
-.frame-5 {
-  width: 102px;
-  height: 987px;
-  position: relative;
+
+.hamburger-menu span {
+  width: 2rem;
+  height: 0.25rem;
+  background: #333;
 }
-.group {
-  height: auto;
-  position: absolute;
-  right: 0.98%;
-  left: 0%;
-  width: 99.02%;
-  bottom: 0%;
-  top: 0%;
-  height: 100%;
-  overflow: visible;
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 10px;
 }
-.group-799 {
-  height: auto;
-  position: absolute;
-  left: 38.59px;
-  top: 90.76px;
-  overflow: visible;
+
+.menu-item svg {
+  margin-right: 10px;
+  height: 70px;
+  fill:#646cff;
+  /* Add specific styles for the SVG icons here */
 }
-.group-795 {
-  height: auto;
-  position: absolute;
-  left: 35px;
-  top: 195px;
-  overflow: visible;
+
+.menu-item span {
+  display: none;
 }
-.group-794 {
-  height: auto;
-  position: absolute;
-  left: 35.92px;
-  top: 308.98px;
-  overflow: visible;
-}
-.rectangle-3 {
-  height: auto;
-  position: absolute;
-  right: 0%;
-  left: 94.12%;
-  width: 5.88%;
-  bottom: 87.5%;
-  top: 8.54%;
-  height: 3.96%;
-  overflow: visible;
+
+.left-menu.expanded .menu-item span {
+  display: inline;
 }
