@@ -1,6 +1,7 @@
 import psycopg2 as pg
 from user import User
 from announcement import Announcement
+from group import Group
 
 
 class DatabaseManager(object):
@@ -186,6 +187,80 @@ class DatabaseManager(object):
             self.connection.rollback()
             print(ex)
             return None
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
+    def create_group(self, name: str, owner: User) -> Group | None:
+        """
+        Create a new educational group in the database.
+        :param name: The name of the group
+        :param owner: The owner of the group
+        :return: The Group object if the creation was successful, None otherwise
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("INSERT INTO edu_group(name, owner) VALUES (%s, %s) RETURNING id;", [name, owner.get_id()])
+
+            new_id = cursor.fetchone()
+            if new_id[0] <= 0:
+                return None
+
+            self.connection.commit()
+            print("Created group with ID: " + str(new_id[0]))
+            return Group(new_id[0], name, owner)
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return None
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
+    def get_group(self, group_id: int) -> Group | None:
+        """
+        Get an educational group with the given identifier.
+        :param group_id: The identifier of the group
+        :return: The Group object, or None if not found
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT * FROM edu_group WHERE id = %s", [group_id])
+            if cursor.rowcount <= 0:
+                return None
+
+            for record in cursor:
+                group = Group(int(record[0]), record[1], self.get_user(record[2]))
+                return group
+        except pg.Error as ex:
+            print(ex)
+            return None
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
+    def get_groups_by_user(self, user_id: int) -> list[Group]:
+        """
+        Get a list of educational groups a user is a part of.
+        :param user_id: The identifier of the user
+        :return: List of Group objects
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT * FROM edu_group WHERE owner = %s", [user_id])
+
+            groups = []
+            for record in cursor:
+                group = Group(int(record[0]), record[1], self.get_user(record[2]))
+                groups.append(group)
+
+            return groups
+        except pg.Error as ex:
+            print(ex)
+            return []
         finally:
             if cursor and not cursor.closed:
                 cursor.close()
