@@ -1,0 +1,47 @@
+.course-highlight {
+  display: flex;
+  align-items: center;
+  background-color: #f3e3e660;
+  border-radius: 10px;
+  padding: 1.5rem;
+  color: #070220;
+  justify-content: space-between;
+  transition: 0.2s;
+
+  svg {
+    transition: 0.2s;
+  }
+
+  &:hover {
+    opacity: 0.8;
+    transition: 0.2s;
+
+    svg {
+      transform: translateX(8px);
+      transition: 0.2s;
+    }
+  }
+
+  img {
+    width: 100px;
+    border-radius: 10px;
+  }
+
+  .course-info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    margin: 0px 1.5rem;
+
+    h3 {
+      font-size: 27px;
+      font-weight: 500;
+      margin: 0.2rem 0;
+    }
+
+    p {
+      margin: 0.2rem 0;
+      opacity: 0.8;
+    }
+  }
+}
