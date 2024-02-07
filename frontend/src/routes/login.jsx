@@ -39,31 +39,31 @@ function Login() {
     <>
       <div className="login-main">
         <div className='login-left'>
-            <h2>Sign In</h2>
-            <p>Sign in to your account.</p>
+          <h2>Sign In</h2>
+          <p>Sign in to your account.</p>
 
-            <p className="error-message">{errorMessage}</p>
+          <p className="error-message">{errorMessage}</p>
 
-            <form onSubmit={loginPost}>
-                <input type="email" name="email" id="email" placeholder='Email Address' value={email} onChange={(e) => setEmail(e.target.value)} />
-                <input type="password" name="password" id="password" placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)} />
+          <form onSubmit={loginPost}>
+            <input type="email" name="email" id="email" placeholder='Email Address' value={email} onChange={(e) => setEmail(e.target.value)} />
+            <input type="password" name="password" id="password" placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)} />
 
-                <a href="/" className='forgot'>Forgot Password?</a>
-                <input type="submit" value="SIGN IN" />
-                <div className="sign-up">
-                  <p>Don't have an account?</p>
-                  <Link to="/register">
-                    <a>SIGN UP</a>
-                  </Link>
-                </div>
-            </form>
+            <a href="/" className='forgot'>Forgot Password?</a>
+            <input type="submit" value="SIGN IN" />
+            <div className="sign-up">
+              <p>Don't have an account?</p>
+              <Link to="/register">
+                <a>SIGN UP</a>
+              </Link>
+            </div>
+          </form>
 
         </div>
         <div className='login-right'>
-            <div className="catchphrase">
-                <h1>Engage with your <br/>peers in one place.</h1>
-                <p>Lorem ipsum dolor sit amet.</p>
-            </div>
+          <div className="catchphrase">
+            <h1>Engage with your <br />peers in one place.</h1>
+            <p>Lorem ipsum dolor sit amet.</p>
+          </div>
         </div>
       </div>
     </>
