@@ -11,8 +11,6 @@ import ErrorPage from "./error-page.jsx";
 import Dashboard from './routes/dashboard.jsx'; // Corrected import
 import CourseView from './routes/course-view.jsx'; // Import CourseView
 
-
-
 const router = createBrowserRouter([
   {
     path: '/',
@@ -34,7 +32,6 @@ const router = createBrowserRouter([
     element: <CourseView />,
     errorElement: <ErrorPage />,
   },
-
   {
     path: "/register",
     element: <Register />,
@@ -51,7 +48,5 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <RouterProvider router={router} />
-
   </React.StrictMode>
-
 );

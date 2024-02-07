@@ -11,3 +11,9 @@
   font-style: italic;
   max-width: 20vw;
 }
+
+#error-page {
+  width: 50%;
+  margin: auto;
+  text-align: center;
+}
