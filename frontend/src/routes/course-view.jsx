@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Menu from '../components/menu';
-import LeftMenu from '../components/left_menu';
 import '../styles/course-view.css';
 
 const CourseView = () => {
@@ -69,7 +68,6 @@ const CourseView = () => {
   return (
     <>
       <Menu />
-      <LeftMenu />
 
       <div className="course-view">
         {courseData && courseData.backgroundImage && (

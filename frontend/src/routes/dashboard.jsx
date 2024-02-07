@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import "../styles/dashboard.css"
 import { Link } from "react-router-dom";
 import Menu from "../components/menu";
-import LeftMenu from "../components/left_menu";
 import CourseHighlight from "../components/course_highlight";
 import UpcomingEvents from "../components/upcoming_event_highlight";
 
@@ -76,7 +75,6 @@ function Dashboard() {
   return (
     <>
       <Menu />
-      <LeftMenu />
 
       <div className="dashboard">
         <div className="group-main ">
