@@ -191,7 +191,7 @@ class DatabaseManager(object):
             if cursor and not cursor.closed:
                 cursor.close()
 
-    def create_group(self, name: str, owner: User) -> Group | None:
+    def create_group(self, name: str, owner: int=1) -> Group | None:
         """
         Create a new educational group in the database.
         :param name: The name of the group
@@ -201,7 +201,7 @@ class DatabaseManager(object):
         cursor = None
         try:
             cursor = self.connection.cursor()
-            cursor.execute("INSERT INTO edu_group(name, owner) VALUES (%s, %s) RETURNING id;", [name, owner.get_id()])
+            cursor.execute("INSERT INTO edu_group(name, owner) VALUES (%s, %s) RETURNING id;", [name, owner])
 
             new_id = cursor.fetchone()
             if new_id[0] <= 0:
@@ -232,7 +232,9 @@ class DatabaseManager(object):
                 return None
 
             for record in cursor:
-                group = Group(int(record[0]), record[1], self.get_user(record[2]))
+                rec = self.get_user(record[2])
+                if rec is None:continue
+                group = Group(int(record[0]), record[1], rec)
                 return group
         except pg.Error as ex:
             print(ex)

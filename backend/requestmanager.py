@@ -160,28 +160,38 @@ class RequestManager(object):
         :return: The details of the created group
         """
         data = request.get_json()
-        user_id = data.get("owner")
-        owner = DatabaseManager.instance().get_user(user_id)
+        # user_id = data.get("owner")
+        # owner = DatabaseManager.instance().get_user(user_id)
 
-        if owner is None:
-            body = {
-                "message": "Owner not found. Please provide a valid owner ID."
-            }
-            return self._respond(status_code=404, body=body)
+        # if owner is None:
+        #     body = {
+        #         "message": "Owner not found. Please provide a valid owner ID."
+        #     }
+        #     return self._respond(status_code=404, body=body)
 
-        group_name = data.get("name")
-        new_group = DatabaseManager.instance().create_group(group_name, owner)
+        group_name = data.get("groupName")
+        print(group_name)
+        new_group = DatabaseManager.instance().create_group(group_name)
 
         if new_group is not None:
             group_data = {
                 "groupName": new_group.get_name(),
                 "groupOwner": {
-                    "ownerId": new_group.get_owner().get_id(),
-                    "ownerUsername": new_group.get_owner().get_username(),
+                    "ownerId": 1,
+                    "ownerUsername": "Owner",
                 },
                 "creationDate": new_group.get_creation_date().isoformat(),
                 "backgroundImage": 'https://picsum.photos/seed/picsum/200',  # Provide a default background image
             }
+            # group_data = {
+            #     "groupName": new_group.get_name(),
+            #     "groupOwner": {
+            #         "ownerId": new_group.get_owner().get_id(),
+            #         "ownerUsername": new_group.get_owner().get_username(),
+            #     },
+            #     "creationDate": new_group.get_creation_date().isoformat(),
+            #     "backgroundImage": 'https://picsum.photos/seed/picsum/200',  # Provide a default background image
+            # }
             return self._respond(status_code=200, body=group_data)
 
         body = {

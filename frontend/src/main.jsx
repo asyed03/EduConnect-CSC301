@@ -10,6 +10,7 @@ import Login from "./routes/login.jsx";
 import ErrorPage from "./error-page.jsx";
 import Dashboard from './routes/dashboard.jsx'; // Corrected import
 import CourseView from './routes/course-view.jsx'; // Import CourseView
+import GroupRegister from './routes/groupregister.jsx';
 
 
 
@@ -44,7 +45,11 @@ const router = createBrowserRouter([
     path: "/announcements",
     element: <Announcements />,
     errorElement: <ErrorPage />
-  }
+  }, 
+  {  path: "/groupregister",
+  element: <GroupRegister />,
+  errorElement: <ErrorPage />
+}
 
 ]);
 

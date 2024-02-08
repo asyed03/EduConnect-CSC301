@@ -1,5 +1,5 @@
 from datetime import datetime
-from users import User  # Assuming users.py is in the same directory
+from user import User  # Assuming users.py is in the same directory
 
 class Group:
     """
