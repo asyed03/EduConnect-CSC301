@@ -32,6 +32,8 @@ def add_endpoints(server: Flask, request_manager: RequestManager):
     server.add_url_rule("/events/join/<id>", "events-join", methods=["POST"], view_func=request_manager.post_event_join)
 
     server.add_url_rule("/users/<id>", "users-get", methods=["GET"], view_func=request_manager.get_user)
+    server.add_url_rule("/users/update", "users-update", methods=["POST"], view_func=request_manager.post_user_update)
+    server.add_url_rule("/users/update/password", "users-update-password", methods=["POST"], view_func=request_manager.post_user_change_password)
 
 
 if __name__ == "__main__":

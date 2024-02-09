@@ -4,7 +4,12 @@ import Menu from "../components/menu";
 
 function ProfileSettings() {
     const [email, setEmail] = useState("");
+    const [currentPass, setCurrentPass] = useState("");
+    const [newPassword, setNewPassword] = useState("");
+    const [newPasswordConfirm, setNewPasswordConfirm] = useState("");
     const [events, setEvents] = useState([]);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
 
     async function fetchData() {
         try {
@@ -39,6 +44,66 @@ function ProfileSettings() {
         fetchProfile();
     }, []);
 
+    async function savePersonal() {
+        const body = {
+            "userid": sessionStorage.getItem("userid"),
+            "newEmail": email
+        };
+
+        const response = await fetch("http://127.0.0.1:8001/users/update", {
+            method: "POST",
+            body: JSON.stringify(body),
+            headers: {
+                "Content-type": "application/json"
+            }
+        });
+
+        const res = response.status;
+        const json = await response.json();
+
+        if (res != 200) {
+            setErrorMessage(json.message);
+            setSuccessMessage("");
+        }
+        else {
+            setErrorMessage("");
+            setSuccessMessage(json.message);
+        }
+
+        console.log("POST: ", res)
+    }
+
+    async function changePassword() {
+        const body = {
+            "userid": sessionStorage.getItem("userid"),
+            "currentPass": currentPass,
+            "newPass": newPassword,
+            "newPassConfirm": newPasswordConfirm
+        };
+
+        const response = await fetch("http://127.0.0.1:8001/users/update/password", {
+            method: "POST",
+            body: JSON.stringify(body),
+            headers: {
+                "Content-type": "application/json"
+            }
+        });
+
+        const res = response.status;
+        const json = await response.json();
+
+        if (res != 200) {
+            setErrorMessage(json.message);
+            setSuccessMessage("");
+        }
+        else {
+            setErrorMessage("");
+            setSuccessMessage(json.message);
+        }
+
+        console.log("POST: ", res)
+    }
+
     return (
         <>
             <Menu />
@@ -52,20 +117,22 @@ function ProfileSettings() {
                     <a href="#events">Upcoming Events</a>
                 </div>
                 <div className="settings">
+                    <p className="error-message">{errorMessage}</p>
+                    <p className="success-message">{successMessage}</p>
                     <div className="settings-module personal" id="personal">
                         <h3>Personal Information</h3>
-                        <input type="text" name="email" id="email" placeholder={email} onChange={() => setEmail(e.target.value)} />
-                        <button>SAVE</button>
+                        <input type="text" name="email" id="email" placeholder={email} onChange={(e) => setEmail(e.target.value)} />
+                        <button onClick={savePersonal}>SAVE</button>
                     </div>
 
                     <div className="settings-module password" id="password">
                         <h3>Password</h3>
                         <div className="pass-input">
-                            <input type="password" name="currentPass" placeholder="Your current password" />
-                            <input type="password" name="newPass" placeholder="Your new password" />
-                            <input type="password" name="newPassConfirm" placeholder="Retype new password" />
+                            <input type="password" name="currentPass" placeholder="Your current password" onChange={(e) => setCurrentPass(e.target.value)} />
+                            <input type="password" name="newPass" placeholder="Your new password" onChange={(e) => setNewPassword(e.target.value)} />
+                            <input type="password" name="newPassConfirm" placeholder="Retype new password" onChange={(e) => setNewPasswordConfirm(e.target.value)} />
                         </div>
-                        <button>CHANGE PASSWORD</button>
+                        <button onClick={changePassword}>CHANGE PASSWORD</button>
                     </div>
 
                     <div className="settings-module attending-events" id="events">

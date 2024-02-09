@@ -41,40 +41,40 @@ function GroupRegister() {
     }
   }
   return (
-  <>
-    <div className="groupregister-main">
-      <div className='groupregister-left'>
-        <h1>Create a Course</h1>
-        <p className="error-message">{errorMessage}</p>
-      <p className="success-message">{successMessage}</p>
-        <form onSubmit={groupRegisterPost}>
-          <input
+    <>
+      <div className="groupregister-main">
+        <div className='groupregister-left'>
+          <h1>Create a Course</h1>
+          <p className="error-message">{errorMessage}</p>
+          <p className="success-message">{successMessage}</p>
+          <form onSubmit={groupRegisterPost}>
+            <input
               type="text"
               name="groupName"
-              id ="groupName"
+              id="groupName"
               value={groupName}
               placeholder="Course name..."
               onChange={(e) => setGroupName(e.target.value)}
-          />
-          <input
+            />
+            <input
               type="text"
               name="groupDesc"
-              id ="groupDesc"
+              id="groupDesc"
               value={groupDesc}
               placeholder="A short description..."
               onChange={(e) => setGroupDesc(e.target.value)}
-          />
-          <input type="submit" value="CREATE COURSE"/>
-        </form>
-      </div>
-      <div className='groupregister-right'>
-        <div className="catchphrase">
-          <h1>Join All Your Classmates!</h1>
-          <h2>All your peers in one place</h2>
+            />
+            <input type="submit" value="CREATE COURSE" />
+          </form>
+        </div>
+        <div className='groupregister-right'>
+          <div className="catchphrase">
+            <h1>Join All Your Classmates!</h1>
+            <h2>All your peers in one place</h2>
+          </div>
         </div>
       </div>
-    </div>
-  </>
+    </>
   )
 }
 export default GroupRegister

@@ -161,6 +161,82 @@ class RequestManager(object):
 
         return self._respond(status_code=200, body=res)
 
+    def post_user_change_password(self):
+        """
+        Handle a POST request for user updates.
+        :return: If the operation was successful
+        """
+        data = request.get_json()
+        user_id = data["userid"]
+        current_password = data["currentPass"]
+        new_password = data["newPass"]
+        new_confirm = data["newPassConfirm"]
+
+        if new_password != new_confirm:
+            body = {
+                "message": "New password does not match the confirmation."
+            }
+
+            return self._respond(status_code=401, body=body)
+
+        user = DatabaseManager.instance().get_user(user_id)
+        if not user:
+            body = {
+                "message": "Could not find the specified user."
+            }
+
+            return self._respond(status_code=404, body=body)
+
+        if current_password != user.get_password():
+            body = {
+                "message": "Incorrect current password."
+            }
+
+            return self._respond(status_code=401, body=body)
+
+        res = DatabaseManager.instance().update_user(user_id, password=new_password)
+
+        if res:
+            body = {
+                "message": "Updated successfully."
+            }
+            return self._respond(status_code=200, body=body)
+        else:
+            body = {
+                "message": "Could not update information."
+            }
+            return self._respond(status_code=401, body=body)
+
+    def post_user_update(self):
+        """
+        Handle a POST request for user updates.
+        :return: If the operation was successful
+        """
+        data = request.get_json()
+        user_id = data["userid"]
+        new_email = data["newEmail"]
+
+        user = DatabaseManager.instance().get_user(user_id)
+        if not user:
+            body = {
+                "message": "Could not find the specified user."
+            }
+
+            return self._respond(status_code=404, body=body)
+
+        res = DatabaseManager.instance().update_user(user_id, email=new_email)
+
+        if res:
+            body = {
+                "message": "Updated successfully."
+            }
+            return self._respond(status_code=200, body=body)
+        else:
+            body = {
+                "message": "Could not update information."
+            }
+            return self._respond(status_code=401, body=body)
+
     def get_group(self, id):
         """
         Get a group.

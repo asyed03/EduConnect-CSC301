@@ -115,6 +115,43 @@ class DatabaseManager(object):
             if cursor and not cursor.closed:
                 cursor.close()
 
+    def update_user(self, user_id: int, email: str = None, password: str = None) -> bool:
+        """
+        Update a user.
+        :param user_id:
+        :param email:
+        :param password:
+        :return: If the update was successful
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            query = "UPDATE edu_user SET "
+            v = []
+            if email is not None:
+                query += "email = %s"
+                v.append(email)
+
+            if password is not None:
+                if email is not None:
+                    query += ", "
+                query += "password = %s"
+                v.append(password)
+
+            query += " WHERE id = %s"
+            v.append(user_id)
+            cursor.execute(query, v)
+
+            self.connection.commit()
+            return True
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return False
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
     def get_user(self, identifier: int) -> User | None:
         """
         Get a user with the given identifier.
