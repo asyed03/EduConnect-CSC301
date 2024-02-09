@@ -151,3 +151,91 @@ class RequestManager(object):
         }
 
         return self._respond(status_code=200, body=body)
+    
+
+
+    def post_create_group(self):
+        """
+        Handle a POST request for creating a new educational group.
+        :return: The details of the created group
+        """
+        data = request.get_json()
+        # user_id = data.get("owner")
+        # owner = DatabaseManager.instance().get_user(user_id)
+
+        # if owner is None:
+        #     body = {
+        #         "message": "Owner not found. Please provide a valid owner ID."
+        #     }
+        #     return self._respond(status_code=404, body=body)
+
+        group_name = data.get("groupName")
+        print(group_name)
+        new_group = DatabaseManager.instance().create_group(group_name)
+
+        if new_group is not None:
+            group_data = {
+                "groupName": new_group.get_name(),
+                "groupOwner": {
+                    "ownerId": 1,
+                    "ownerUsername": "Owner",
+                },
+                "creationDate": new_group.get_creation_date().isoformat(),
+                "backgroundImage": 'https://picsum.photos/seed/picsum/200',  # Provide a default background image
+            }
+            # group_data = {
+            #     "groupName": new_group.get_name(),
+            #     "groupOwner": {
+            #         "ownerId": new_group.get_owner().get_id(),
+            #         "ownerUsername": new_group.get_owner().get_username(),
+            #     },
+            #     "creationDate": new_group.get_creation_date().isoformat(),
+            #     "backgroundImage": 'https://picsum.photos/seed/picsum/200',  # Provide a default background image
+            # }
+            return self._respond(status_code=200, body=group_data)
+
+        body = {
+            "message": "Failed to create the group. Please try again."
+        }
+        return self._respond(status_code=500, body=body)
+
+    def get_group_details(self, group_id):
+        """
+        Handle a GET request for educational group details.
+        :return: Details of the educational group
+        """
+        group = DatabaseManager.instance().get_group(group_id)
+
+        if group is None:
+            return self._respond(status_code=404)
+
+        group_data = {
+            "groupName": group.get_name(),
+            "groupOwner": {
+                "ownerId": group.get_owner().get_id(),
+                "ownerUsername": group.get_owner().get_username(),
+            },
+            "creationDate": group.get_creation_date().isoformat(),
+            "backgroundImage": 'https://picsum.photos/seed/picsum/200',  # Provide a default background image
+        }
+
+        return self._respond(status_code=200, body=group_data)
+
+    def get_user_groups(self, user_id):
+        """
+        Handle a GET request for a list of educational groups owned by a user.
+        :return: List of educational groups
+        """
+        user = DatabaseManager.instance().get_user(user_id)
+
+        if user is None:
+            return self._respond(status_code=404)
+
+        groups = DatabaseManager.instance().get_groups_by_user(user_id)
+
+        group_list = {}
+        for group in groups:
+            group_list[str(group.get_id())] = group.get_name()
+
+        return self._respond(status_code=200, body=group_list)
+
