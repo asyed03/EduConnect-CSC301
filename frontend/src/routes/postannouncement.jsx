@@ -2,7 +2,7 @@ import { useState } from 'react'
 import "../styles/groupregister.scss"
 import { useParams } from "react-router-dom"
 
-function GroupRegister() {
+function PostAnnouncement() {
     const { courseId } = useParams();
     const [contents, setContents] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
@@ -68,4 +68,4 @@ function GroupRegister() {
         </>
     )
 }
-export default GroupRegister
+export default PostAnnouncement

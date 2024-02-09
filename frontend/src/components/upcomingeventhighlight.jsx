@@ -5,12 +5,13 @@ function UpcomingEvents({ event }) {
   return (
     <div className="upcoming-event">
       <div className="icon">
-        <img src={event.image} alt={event.title} />
+        <img src="https://picsum.photos/500" alt={event.title} />
         {/* Insert SVG or image tag for the icon here */}
       </div>
       <div className="info">
-        <h3>{event.title}</h3>
-        <p>{event.noOfStudentsEnrolled} attending</p>
+        <h3><i>{event.group}:</i> {event.title}</h3>
+        <p>{event.attending} attending</p>
+        <p>{event.date.toString()}</p>
       </div>
       <button className="join-event-btn">Join</button>
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-right" viewBox="0 0 16 16">

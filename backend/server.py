@@ -25,8 +25,11 @@ def add_endpoints(server: Flask, request_manager: RequestManager):
     server.add_url_rule("/groups/user/<id>", "user-group-get", methods=["GET"], view_func=request_manager.get_user_groups)
     server.add_url_rule("/groups", "group-get-all", methods=["GET"], view_func=request_manager.get_all_groups)
     server.add_url_rule("/groups/join/<id>", "group-join", methods=["POST"], view_func=request_manager.post_join_group)
-    server.add_url_rule("/groups/<id>", "group-get", methods=["GET"],
-                        view_func=request_manager.get_group)
+    server.add_url_rule("/groups/<id>", "group-get", methods=["GET"], view_func=request_manager.get_group)
+
+    server.add_url_rule("/events/<id>", "events-get", methods=["GET"], view_func=request_manager.get_user_events)
+    server.add_url_rule("/events/create", "events-create", methods=["POST"], view_func=request_manager.post_event)
+    server.add_url_rule("/events/join/<id>", "events-join", methods=["POST"], view_func=request_manager.post_event_join)
 
 
 if __name__ == "__main__":

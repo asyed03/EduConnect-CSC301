@@ -14,6 +14,7 @@ function Dashboard() {
 
   async function fetchData() {
     try {
+      // Find enrolled courses
       const coursesResponse = await fetch(`http://127.0.0.1:8001/groups/user/${sessionStorage.getItem("userid")}`);
       const coursesData = await coursesResponse.json();
       
@@ -35,7 +36,11 @@ function Dashboard() {
       setActiveCourses(coursesData);
       setAllCourses(tempAll);
 
-      //setUpcomingEvents(eventsData);
+      // Find events
+      const eventsResponse = await fetch(`http://127.0.0.1:8001/events/${sessionStorage.getItem("userid")}`);
+      const eventsData = await eventsResponse.json();
+      console.log(eventsData);
+      setUpcomingEvents(eventsData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -48,54 +53,6 @@ function Dashboard() {
     }
 
     fetchDashboardData();
-    // Example data
-    const egData = {
-      "upcomingEvents": [
-        {
-          "id": 1,
-          "title": "301 Office Hours",
-          "description": "Join us for a fun and informative meetup about React.",
-          "date": "2024-03-01T18:00:00Z",
-          "noOfStudentsEnrolled": 15,
-          "image": "https://picsum.photos/500"
-        },
-        {
-          "id": 2,
-          "title": "309 Office Hours",
-          "description": "A hands-on workshop where you'll build a small project using React.",
-          "date": "2024-04-01T09:00:00Z",
-          "noOfStudentsEnrolled": 10,
-          "image": "https://picsum.photos/600"
-        },
-        {
-          "id": 3,
-          "title": "311 Group Study",
-          "description": "A hands-on workshop where you'll build a small project using React.",
-          "date": "2024-04-01T09:00:00Z",
-          "noOfStudentsEnrolled": 10,
-          "image": "https://picsum.photos/700"
-        },
-        {
-          "id": 4,
-          "title": "347 Group Study",
-          "description": "A hands-on workshop where you'll build a small project using React.",
-          "date": "2024-04-01T09:00:00Z",
-          "noOfStudentsEnrolled": 10,
-          "image": "https://picsum.photos/200"
-        },
-        {
-          "id": 5,
-          "title": "343 Office Hours",
-          "description": "A hands-on workshop where you'll build a small project using React.",
-          "date": "2024-04-01T09:00:00Z",
-          "noOfStudentsEnrolled": 10,
-          "image": "https://picsum.photos/800"
-        }
-      ]
-    }
-
-    //setActiveCourses(egData["activeCourses"]);
-    setUpcomingEvents(egData["upcomingEvents"]);
   }, []);
 
   async function joinGroup(course) {
@@ -116,7 +73,26 @@ function Dashboard() {
       fetchData();
     }
 
-    console.log(activeCourses);
+    console.log("POST: ", res)
+  }
+
+  async function joinEvent(event) {
+    const body = {
+      "userid": sessionStorage.getItem("userid")
+    };
+
+    const response = await fetch(`http://127.0.0.1:8001/events/join/${event.id}`, {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: {
+        "Content-type": "application/json"
+      }
+    });
+
+    const res = response.status;
+    if (res == 200) {
+      fetchData();
+    }
 
     console.log("POST: ", res)
   }
@@ -212,16 +188,13 @@ function Dashboard() {
         </div>
 
         <div className="group-events">
-          <Link to="/groupregister">
-            <button className="create-btn">Create Event</button>
-          </Link>
           {/* Upcoming Events Section */}
           <h2>Upcoming events</h2>
           <div className="upcoming-events">
             {upcomingEvents.map(event => (
-              <Link to={`/events/${event.id}`} key={event.id}>
+              <a onClick={() => joinEvent(event)} key={event.id}>
                 <UpcomingEvents event={event} />
-              </Link>
+              </a>
             ))}
           </div>
         </div>
