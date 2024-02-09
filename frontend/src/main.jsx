@@ -9,6 +9,7 @@ import Login from "./routes/login.jsx";
 import ErrorPage from "./error-page.jsx";
 import Dashboard from './routes/dashboard.jsx'; // Corrected import
 import CourseView from './routes/course-view.jsx'; // Import CourseView
+import GroupRegister from './routes/groupregister.jsx';
 
 const router = createBrowserRouter([
   {
@@ -35,7 +36,11 @@ const router = createBrowserRouter([
     path: "/register",
     element: <Register />,
     errorElement: <ErrorPage />
-  }
+  },
+  {  path: "/groupregister",
+  element: <GroupRegister />,
+  errorElement: <ErrorPage />
+    }
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
