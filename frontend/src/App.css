@@ -61,3 +61,20 @@ button.create-btn:hover {
   width: 200px;
   transition: 0.2s;
 }
+
+input {
+  border: 1px solid rgba(128, 128, 128, 0.479);
+  border-radius: 10px;
+  padding: 1rem;
+  margin: 0.5rem 0;
+  transition: 0.2s;
+}
+
+input:hover {
+  transform: scale(1.01);
+  transition: 0.2s;
+}
+
+input:focus-visible {
+  outline: 2px solid rgba(128, 128, 128, 0.185);
+}

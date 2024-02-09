@@ -27,19 +27,6 @@
                 text-align: center;
             }
 
-            input {
-                border: 1px solid rgba(128, 128, 128, 0.479);
-                border-radius: 15px;
-                padding: 1rem;
-                margin: 0.5rem 0;
-                transition: 0.2s;
-
-                &:hover {
-                    transform: scale(1.01);
-                    transition: 0.2s;
-                }
-            }
-
             input[type=submit] {
                 background: linear-gradient(180deg, rgb(65, 174, 224) 0%, rgb(172, 204, 219) 100%);
                 border: none;

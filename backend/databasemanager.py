@@ -1,6 +1,7 @@
 import psycopg2 as pg
 from user import User
 from announcement import Announcement
+from event import Event
 from group import Group
 
 
@@ -102,10 +103,12 @@ class DatabaseManager(object):
             if cursor.rowcount <= 0:
                 return None
 
-            for record in cursor:
-                user = User(int(record[0]), record[2], record[1], record[3])
-                return user
+            r = cursor.fetchone()
+            user = User(int(r[0]), r[2], r[1], r[3])
+            self.connection.commit()
+            return user
         except pg.Error as ex:
+            self.connection.rollback()
             print(ex)
             return None
         finally:
@@ -125,10 +128,12 @@ class DatabaseManager(object):
             if cursor.rowcount <= 0:
                 return None
 
-            for record in cursor:
-                user = User(int(record[0]), record[2], record[1], record[3])
-                return user
+            r = cursor.fetchone()
+            user = User(int(r[0]), r[2], r[1], r[3])
+            self.connection.commit()
+            return user
         except pg.Error as ex:
+            self.connection.rollback()
             print(ex)
             return None
         finally:
@@ -153,8 +158,10 @@ class DatabaseManager(object):
                 ann = Announcement(record[0], record[1], record[2], record[4], record[3])
                 announcements.append(ann)
 
+            self.connection.commit()
             return announcements
         except pg.Error as ex:
+            self.connection.rollback()
             print(ex)
             return []
         finally:
@@ -174,10 +181,12 @@ class DatabaseManager(object):
             if cursor.rowcount <= 0:
                 return None
 
-            for record in cursor:
-                announcement = Announcement(identifier, record[1], record[2], record[4], record[3])
-                return announcement
+            r = cursor.fetchone()
+            announcement = Announcement(identifier, r[1], r[2], r[4], r[3])
+            self.connection.commit()
+            return announcement
         except pg.Error as ex:
+            self.connection.rollback()
             print(ex)
             return None
         finally:
@@ -261,8 +270,10 @@ class DatabaseManager(object):
 
             g = cursor.fetchone()
             group = Group(g[0], g[1], g[2], g[3], g[4])
+            self.connection.commit()
             return group
         except pg.Error as ex:
+            self.connection.rollback()
             print(ex)
             return None
         finally:
@@ -284,8 +295,10 @@ class DatabaseManager(object):
                 group = Group(record[0], record[1], record[2], record[3], record[4])
                 groups.append(group)
 
+            self.connection.commit()
             return groups
         except pg.Error as ex:
+            self.connection.rollback()
             print(ex)
             return []
         finally:
@@ -309,8 +322,10 @@ class DatabaseManager(object):
                 if group is not None:
                     groups.append(group)
 
+            self.connection.commit()
             return groups
         except pg.Error as ex:
+            self.connection.rollback()
             print(ex)
             return []
         finally:
@@ -327,8 +342,11 @@ class DatabaseManager(object):
         try:
             cursor = self.connection.cursor()
             cursor.execute("SELECT COUNT(*) FROM group_member WHERE group_id = %s", [group_id])
-            return cursor.fetchone()[0]
+            res = cursor.fetchone()[0]
+            self.connection.commit()
+            return res
         except pg.Error as ex:
+            self.connection.rollback()
             print(ex)
             return 0
         finally:
@@ -355,6 +373,127 @@ class DatabaseManager(object):
             self.connection.rollback()
             print(ex)
             return False
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
+    def post_event(self, group: Group, poster: User, date: str, title: str, description: str):
+        """
+        Post a new event to the given group.
+        :param group: The group to post the event to
+        :param poster: The person posting the event
+        :param date: The date of the event
+        :param title: The title of the event
+        :param description: The description of the event
+        :return: The object for the event
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("INSERT INTO event(group_id, creator_id, event_date, title, description) "
+                           "VALUES (%s, %s, %s, %s, %s) RETURNING id, event_date;",
+                           [group.get_id(), poster.get_id(), date, title, description])
+
+            res = cursor.fetchone()
+            new_id = res[0]
+            new_date = res[1]
+
+            if new_id <= 0:
+                return None
+
+            self.connection.commit()
+
+            new_event = Event(new_id, poster.get_id(), group.get_id(), new_date, title, description)
+            return new_event
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return None
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
+    def get_group_events(self, group_id: int) -> list[Event]:
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT * FROM event WHERE group_id = %s", [group_id])
+
+            events = []
+            for record in cursor:
+                event = Event(record[0], record[2], record[1], record[3], record[4], record[5])
+                events.append(event)
+
+            self.connection.commit()
+            return events
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return []
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
+    def get_events(self, user_id: int) -> list[Event]:
+        """
+        Get all events for a user.
+        :return: A list of all events.
+        """
+        groups = self.get_groups_by_user(user_id)
+
+        events = []
+        for group in groups:
+            e = self.get_group_events(group.get_id())
+            events.extend(e)
+
+        return events
+
+    def join_event(self, user_id: int, event_id: int) -> bool:
+        """
+        Join the event with the given user.
+        :param user_id: The user joining
+        :param event_id: The event to join
+        :return: True if the operation was successful, false otherwise
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute(
+                "INSERT INTO event_attend(event_id, member_id) VALUES (%s, %s)", [event_id, user_id])
+
+            self.connection.commit()
+            print(f"User {0} joined group {1}", user_id, event_id)
+            return True
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return False
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
+    def get_event_attending(self, event_id: int) -> list[int]:
+        """
+        Get all the students attending an event.
+        :param event_id: The ID of the event
+        :return: The list of students attending
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT member_id FROM event_attend WHERE event_id = %s", [event_id])
+
+            ids = []
+            for record in cursor:
+                ids.append(record[0])
+
+            self.connection.commit()
+
+            return ids
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return []
         finally:
             if cursor and not cursor.closed:
                 cursor.close()

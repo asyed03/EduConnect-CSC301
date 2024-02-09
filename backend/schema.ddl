@@ -33,3 +33,19 @@ CREATE TABLE IF NOT EXISTS group_member (
     join_date timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY(group_id, member_id)
 );
+
+CREATE TABLE IF NOT EXISTS event (
+    id serial NOT NULL,
+    group_id integer NOT NULL REFERENCES edu_group(id),
+    creator_id integer NOT NULL REFERENCES edu_user(id),
+    event_date timestamptz NOT NULL,
+    title text NOT NULL,
+    description text NOT NULL,
+    PRIMARY KEY(id)
+);
+
+CREATE TABLE IF NOT EXISTS event_attend (
+    event_id integer NOT NULL REFERENCES event(id),
+    member_id integer NOT NULL REFERENCES edu_user(id),
+    PRIMARY KEY(event_id, member_id)
+);

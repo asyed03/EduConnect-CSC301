@@ -46,6 +46,15 @@ const CourseView = () => {
           <h3>Course Information</h3>
           <p>Instructor email: {courseData ? courseData.instructor || 'N/A' : 'N/A'}</p>
           <p>Number of Students Enrolled: {courseData ? courseData.enrolled || 'N/A' : 'N/A'}</p>
+          {
+            courseData && (
+              <>
+                <Link to={`/createevent/${courseData.id}`}>
+                  <button className="create-btn">New Event</button>
+                </Link>
+              </>
+            )
+          }
         </div>
 
         <div className="course-announcements">
@@ -56,7 +65,7 @@ const CourseView = () => {
                 <Link to={`/postannouncement/${courseData.id}`}>
                   <button className="create-btn">New</button>
                 </Link>
-                { announcements.map((announcement) => (
+                {announcements.map((announcement) => (
                   <AnnouncementHighlight announcement={announcement} />
                 ))}
               </>
