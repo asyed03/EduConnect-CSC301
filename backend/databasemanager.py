@@ -135,6 +135,32 @@ class DatabaseManager(object):
             if cursor and not cursor.closed:
                 cursor.close()
 
+    def get_announcements(self, group_id: int) -> list:
+        """
+        Get all the announcements in the given group.
+        :param group_id: The group to look for announcements in
+        :return: A list of all the announcements in the group
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT * FROM announcement WHERE group_id = %s", [group_id])
+            if cursor.rowcount <= 0:
+                return []
+
+            announcements = []
+            for record in cursor:
+                ann = Announcement(record[0], record[1], record[2], record[4], record[3])
+                announcements.append(ann)
+
+            return announcements
+        except pg.Error as ex:
+            print(ex)
+            return []
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
     def get_announcement(self, identifier: int) -> Announcement | None:
         """
         Get an announcement with the given identifier.
@@ -191,17 +217,19 @@ class DatabaseManager(object):
             if cursor and not cursor.closed:
                 cursor.close()
 
-    def create_group(self, name: str, owner: int=1) -> Group | None:
+    def create_group(self, name: str, desc: str, owner: int) -> Group | None:
         """
         Create a new educational group in the database.
         :param name: The name of the group
+        :param desc: The description of the group
         :param owner: The owner of the group
         :return: The Group object if the creation was successful, None otherwise
         """
         cursor = None
         try:
             cursor = self.connection.cursor()
-            cursor.execute("INSERT INTO edu_group(name, owner) VALUES (%s, %s) RETURNING id;", [name, owner])
+            cursor.execute("INSERT INTO edu_group(name, description, owner) VALUES (%s, %s, %s) RETURNING id, creation_date;",
+                           [name, desc, owner])
 
             new_id = cursor.fetchone()
             if new_id[0] <= 0:
@@ -209,7 +237,7 @@ class DatabaseManager(object):
 
             self.connection.commit()
             print("Created group with ID: " + str(new_id[0]))
-            return Group(new_id[0], name, owner)
+            return Group(new_id[0], name, desc, owner, new_id[1])
         except pg.Error as ex:
             self.connection.rollback()
             print(ex)
@@ -221,8 +249,8 @@ class DatabaseManager(object):
     def get_group(self, group_id: int) -> Group | None:
         """
         Get an educational group with the given identifier.
-        :param group_id: The identifier of the group
-        :return: The Group object, or None if not found
+        :param group_id: The identifier of the group to find
+        :return: Group object, or None if not found
         """
         cursor = None
         try:
@@ -231,14 +259,35 @@ class DatabaseManager(object):
             if cursor.rowcount <= 0:
                 return None
 
-            for record in cursor:
-                rec = self.get_user(record[2])
-                if rec is None:continue
-                group = Group(int(record[0]), record[1], rec)
-                return group
+            g = cursor.fetchone()
+            group = Group(g[0], g[1], g[2], g[3], g[4])
+            return group
         except pg.Error as ex:
             print(ex)
             return None
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
+    def get_all_groups(self, exclude_user: int = -1) -> list[Group]:
+        """
+        Get all groups.
+        :return: A list of all groups.
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT * FROM edu_group")
+
+            groups = []
+            for record in cursor:
+                group = Group(record[0], record[1], record[2], record[3], record[4])
+                groups.append(group)
+
+            return groups
+        except pg.Error as ex:
+            print(ex)
+            return []
         finally:
             if cursor and not cursor.closed:
                 cursor.close()
@@ -252,17 +301,60 @@ class DatabaseManager(object):
         cursor = None
         try:
             cursor = self.connection.cursor()
-            cursor.execute("SELECT * FROM edu_group WHERE owner = %s", [user_id])
+            cursor.execute("SELECT * FROM group_member WHERE member_id = %s", [user_id])
 
             groups = []
             for record in cursor:
-                group = Group(int(record[0]), record[1], self.get_user(record[2]))
-                groups.append(group)
+                group = self.get_group(record[0])
+                if group is not None:
+                    groups.append(group)
 
             return groups
         except pg.Error as ex:
             print(ex)
             return []
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
+    def get_group_enrolled(self, group_id: int) -> int:
+        """
+        Get the number of students enrolled in a group.
+        :param group_id: The ID of the group
+        :return: The number of students enrolled
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT COUNT(*) FROM group_member WHERE group_id = %s", [group_id])
+            return cursor.fetchone()[0]
+        except pg.Error as ex:
+            print(ex)
+            return 0
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
+    def join_group(self, user_id: int, group_id: int) -> bool:
+        """
+        Join the group with the given user.
+        :param user_id: The user joining
+        :param group_id: The group to join
+        :return: True if the operation was successful, false otherwise
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute(
+                "INSERT INTO group_member(group_id, member_id) VALUES (%s, %s)", [group_id, user_id])
+
+            self.connection.commit()
+            print(f"User {0} joined group {1}", user_id, group_id)
+            return True
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return False
         finally:
             if cursor and not cursor.closed:
                 cursor.close()

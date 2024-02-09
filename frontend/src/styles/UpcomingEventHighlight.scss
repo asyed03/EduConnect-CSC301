@@ -1,0 +1,59 @@
+.upcoming-event {
+  display: flex;
+  align-items: center;
+  background-color: #0ab28b10;
+  border-radius: 5px;
+  padding: 1rem;
+  color: black;
+  justify-content: space-between;
+  transition: 0.2s;
+
+  button {
+    border: none;
+    padding: 20px;
+  }
+
+  img {
+    width: 50px;
+    border-radius: 5px;
+  }
+
+  .info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    margin: 0px 1.5rem;
+
+    h3 {
+      font-size: 17px;
+      font-weight: 500;
+      margin: 0.2rem 0;
+    }
+
+    p {
+      font-size: 13px;
+      margin: 0.2rem 0;
+      opacity: 0.8;
+    }
+
+  }
+
+  button.join-event-btn {
+    background-color: transparent;
+    color: green;
+  }
+
+  svg {
+    transform: translateX(-5px);
+    transition: 0.2s;
+  }
+
+  &:hover {
+    opacity: 0.8;
+    transition: 0.2s;
+
+    svg {
+      transform: translateX(0px);
+    }
+  }
+}

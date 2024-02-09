@@ -1,0 +1,43 @@
+.left-menu {
+  height: 100vh;
+  background-color: white;
+  position: fixed;
+  top: 0;
+  width: 35px;
+  transition: 0.1s ease;
+  z-index: 50;
+  box-shadow: 10px 0px 10px rgba(0, 0, 0, 0.005);
+  padding: 5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+
+  &.expanded {
+    width: 200px;
+    transition: 0.1s ease;
+  }
+
+  .menu-item {
+    display: flex;
+    align-items: center;
+    margin-top: 3rem;
+    color: black;
+    overflow: hidden;
+    white-space: nowrap;
+
+    svg {
+      transition: 0.2s;
+      min-width: 32px;
+    }
+
+    &:hover svg {
+      fill: green;
+      transform: scale(1.05);
+      transition: 0.2s;
+    }
+
+    span {
+      margin-left: 1rem;
+    }
+  }
+}

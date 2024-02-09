@@ -15,22 +15,23 @@ function Index() {
   }
 
   return (
-    <>
+    <div className="landing">
       <div>
         <a href="/login" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
         </a>
       </div>
-      <h1>Educonnect</h1>
+      <h1>Edu-Connect</h1>
+      <p>Connect with your peers</p>
       <div className="card">
         <Link to="/login">
           <button>Sign in</button>
         </Link>
-        <button onClick={getTest}>
-          count is {count}
-        </button>
+        <Link to="/register">
+          <button>Sign up</button>
+        </Link>
       </div>
-    </>
+    </div>
   )
 }
 

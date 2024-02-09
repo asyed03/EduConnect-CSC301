@@ -8,7 +8,7 @@ class RequestManager(object):
         self.get_counter = 0
         self.post_counter = 0
 
-    def _respond(self, status_code: int = 200, body: dict = None, mimetype: str = "application/json"):
+    def _respond(self, status_code: int = 200, body: dict | list = None, mimetype: str = "application/json"):
         return Flask.response_class(
             status=status_code,
             response=json.dumps(body),
@@ -41,7 +41,11 @@ class RequestManager(object):
             }
             return self._respond(status_code=401, body=body)
 
-        return self._respond(status_code=200)
+        body = {
+            "id": user.get_id()
+        }
+
+        return self._respond(status_code=200, body=body)
 
     def post_register(self):
         """
@@ -77,63 +81,50 @@ class RequestManager(object):
             "message": "That username or email is already in use. Please use a different one."
         }
         return self._respond(status_code=401, body=body)
-
-    def get_announcement(self, id):
-        """
-        Handle a GET request for an announcement.
-        :return: The announcement message
-        """
-        announcement = DatabaseManager.instance().get_announcement(id)
-
-        if announcement is None:
-            return self._respond(status_code=404)
-
-        body = {
-            "message": announcement.get_message()
-        }
-
-        return self._respond(status_code=200, body=body)
     
-    def get_announcements(self):
-        """
-        Handle a GET request for a list of announcements.
-        :return: A list of announcements
-        """
-
-        # TODO: return announcement info
-        # DatabaseManager.instance().get_announcements(data.get('announcements'))
-        body = {
-            "1": "announcement 1", 
-            "2": "announcement 2", 
-            "3": "announcement 3", 
-        }
-
-        return self._respond(status_code=200, body=body)
-    
-    def get_course_announcements(self):
+    def get_course_announcements(self, id):
         """
         Handle a GET request for announcements for a given course.
         :return: A list of announcements for the given course
         """
+        announcements = DatabaseManager.instance().get_announcements(id)
+        res = []
 
-        # TODO: return announcement info for enrolled groups from the database
-        # DatabaseManager.instance().get_course_announcements(data.get('course'))
-        body = {
-            "course1": ["announcement1 for course1", "announcement2 for course1", "announcement3 for course1"], 
-        }
+        for announcement in announcements:
+            poster = DatabaseManager.instance().get_user(announcement.get_poster_id())
+            if not poster:
+                continue
 
-        return self._respond(status_code=200, body=body)
+            a = {
+                "poster": poster.get_email(),
+                "message": announcement.get_message(),
+                "date": str(announcement.get_date())
+            }
+            res.append(a)
+
+        return self._respond(status_code=200, body=res)
     
     def post_announcement(self):
         """
         Handle a POST request for announcements.
         :return: A list of announcements
         """
-
         data = request.get_json()
-        announcement = DatabaseManager.instance().post_announcement(data["group"], data["poster"], data["message"])
+
+        if len(data["content"]) <= 0:
+            body = {
+                "message": "You must enter announcement contents."
+            }
+
+            return self._respond(status_code=401, body=body)
+
+        announcement = DatabaseManager.instance().post_announcement(data["groupid"], data["userid"], data["content"])
         if announcement is None:
-            return self._respond(status_code=500)
+            body = {
+                "message": "There was an error while creating the announcement."
+            }
+
+            return self._respond(status_code=500, body=body)
 
         return self._respond(status_code=200)
     
@@ -151,8 +142,32 @@ class RequestManager(object):
         }
 
         return self._respond(status_code=200, body=body)
-    
 
+    def get_group(self, id):
+        """
+        Get a group.
+        :param id: The id of the group
+        :return: If the operation was successful or not
+        """
+        group = DatabaseManager.instance().get_group(id)
+        if group is None:
+            return self._respond(status_code=404)
+
+        owner = DatabaseManager.instance().get_user(group.get_owner())
+        if owner is None:
+            return self._respond(status_code=404)
+
+        enrolled = DatabaseManager.instance().get_group_enrolled(id)
+        res = {
+            "id": group.get_id(),
+            "title": group.get_name(),
+            "description": group.get_description(),
+            "instructor": owner.get_email(),
+            "enrolled": enrolled,
+            "banner": "https://picsum.photos/1920/1080"
+        }
+
+        return self._respond(status_code=200, body=res)
 
     def post_create_group(self):
         """
@@ -160,82 +175,85 @@ class RequestManager(object):
         :return: The details of the created group
         """
         data = request.get_json()
-        # user_id = data.get("owner")
-        # owner = DatabaseManager.instance().get_user(user_id)
+        user_id = data.get("userid")
+        owner = DatabaseManager.instance().get_user(user_id)
 
-        # if owner is None:
-        #     body = {
-        #         "message": "Owner not found. Please provide a valid owner ID."
-        #     }
-        #     return self._respond(status_code=404, body=body)
+        if owner is None:
+            body = {
+                "message": "Owner not found. Please provide a valid owner ID."
+            }
+            return self._respond(status_code=404, body=body)
 
         group_name = data.get("groupName")
-        print(group_name)
-        new_group = DatabaseManager.instance().create_group(group_name)
+        group_desc = data.get("groupDesc")
+        new_group = DatabaseManager.instance().create_group(group_name, group_desc, user_id)
 
         if new_group is not None:
-            group_data = {
-                "groupName": new_group.get_name(),
-                "groupOwner": {
-                    "ownerId": 1,
-                    "ownerUsername": "Owner",
-                },
-                "creationDate": new_group.get_creation_date().isoformat(),
-                "backgroundImage": 'https://picsum.photos/seed/picsum/200',  # Provide a default background image
-            }
-            # group_data = {
-            #     "groupName": new_group.get_name(),
-            #     "groupOwner": {
-            #         "ownerId": new_group.get_owner().get_id(),
-            #         "ownerUsername": new_group.get_owner().get_username(),
-            #     },
-            #     "creationDate": new_group.get_creation_date().isoformat(),
-            #     "backgroundImage": 'https://picsum.photos/seed/picsum/200',  # Provide a default background image
-            # }
-            return self._respond(status_code=200, body=group_data)
+            return self._respond(status_code=200)
 
         body = {
             "message": "Failed to create the group. Please try again."
         }
         return self._respond(status_code=500, body=body)
 
-    def get_group_details(self, group_id):
-        """
-        Handle a GET request for educational group details.
-        :return: Details of the educational group
-        """
-        group = DatabaseManager.instance().get_group(group_id)
-
-        if group is None:
-            return self._respond(status_code=404)
-
-        group_data = {
-            "groupName": group.get_name(),
-            "groupOwner": {
-                "ownerId": group.get_owner().get_id(),
-                "ownerUsername": group.get_owner().get_username(),
-            },
-            "creationDate": group.get_creation_date().isoformat(),
-            "backgroundImage": 'https://picsum.photos/seed/picsum/200',  # Provide a default background image
-        }
-
-        return self._respond(status_code=200, body=group_data)
-
-    def get_user_groups(self, user_id):
+    def get_user_groups(self, id):
         """
         Handle a GET request for a list of educational groups owned by a user.
         :return: List of educational groups
         """
-        user = DatabaseManager.instance().get_user(user_id)
+        user = DatabaseManager.instance().get_user(id)
 
         if user is None:
             return self._respond(status_code=404)
 
-        groups = DatabaseManager.instance().get_groups_by_user(user_id)
+        groups = DatabaseManager.instance().get_groups_by_user(id)
 
-        group_list = {}
+        res = []
         for group in groups:
-            group_list[str(group.get_id())] = group.get_name()
+            enrolled = DatabaseManager.instance().get_group_enrolled(group.get_id())
+            g = {
+                "id": group.get_id(),
+                "title": group.get_name(),
+                "description": group.get_description(),
+                "owner": group.get_owner(),
+                "enrolled": enrolled
+            }
 
-        return self._respond(status_code=200, body=group_list)
+            res.append(g)
 
+        return self._respond(status_code=200, body=res)
+
+    def get_all_groups(self):
+        """
+        Get all groups in the database.
+        :return: All groups in the database
+        """
+        groups = DatabaseManager.instance().get_all_groups()
+        res = []
+        for group in groups:
+            enrolled = DatabaseManager.instance().get_group_enrolled(group.get_id())
+            g = {
+                "id": group.get_id(),
+                "title": group.get_name(),
+                "description": group.get_description(),
+                "owner": group.get_owner(),
+                "enrolled": enrolled
+            }
+
+            res.append(g)
+
+        return self._respond(status_code=200, body=res)
+
+    def post_join_group(self, id):
+        """
+        Join a group.
+        :param id: The id of the group
+        :return: Whether the join was successful or not
+        """
+        data = request.get_json()
+        joined = DatabaseManager.instance().join_group(data["userid"], id)
+
+        if not joined:
+            return self._respond(status_code=500)
+
+        return self._respond(status_code=200)

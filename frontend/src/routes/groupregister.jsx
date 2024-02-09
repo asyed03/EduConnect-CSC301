@@ -1,17 +1,18 @@
 import { useState } from 'react'
 import "../styles/groupregister.scss"
-import Menu  from "../components/menu";
-import LeftMenu  from "../components/left_menu";
-import { Link } from "react-router-dom"
 
 function GroupRegister() {
   const [groupName, setGroupName] = useState("");
+  const [groupDesc, setGroupDesc] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   async function groupRegisterPost(event) {
     event.preventDefault();
     const body = {
+      "userid": sessionStorage.getItem("userid"),
       "groupName": groupName,
+      "groupDesc": groupDesc
     };
 
     try {
@@ -28,34 +29,42 @@ function GroupRegister() {
       if (res !== 200) {
         // Reset error message if registration was successful
         setErrorMessage(json.message);
+        setSuccessMessage("");
       } else {
-        // If the server responded with an error status, parse the JSON response
         setErrorMessage("");
-        console.log("POST: ", res);
+        setSuccessMessage("Group was created successfully.");
       }
     } catch (error) {
       // Handle network errors or other exceptions
+      setSuccessMessage("");
       setErrorMessage("An error occurred while processing your request.");
     }
   }
   return (
   <>
-    <Menu />
-    <LeftMenu />
     <div className="groupregister-main">
       <div className='groupregister-left'>
-        <h1>Create a Group <br/></h1>
+        <h1>Create a Course</h1>
         <p className="error-message">{errorMessage}</p>
+      <p className="success-message">{successMessage}</p>
         <form onSubmit={groupRegisterPost}>
           <input
-              type="groupName"
+              type="text"
               name="groupName"
               id ="groupName"
               value={groupName}
-              placeholder={"Enter a Name For Your Group!"}
+              placeholder="Course name..."
               onChange={(e) => setGroupName(e.target.value)}
           />
-          <input type="submit" value="CREATE GROUP"/>
+          <input
+              type="text"
+              name="groupDesc"
+              id ="groupDesc"
+              value={groupDesc}
+              placeholder="A short description..."
+              onChange={(e) => setGroupDesc(e.target.value)}
+          />
+          <input type="submit" value="CREATE COURSE"/>
         </form>
       </div>
       <div className='groupregister-right'>

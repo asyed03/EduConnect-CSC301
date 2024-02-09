@@ -3,16 +3,14 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
-import Announcements from "./routes/announcements.jsx";
 import Register from './routes/register.jsx'
 import Index from "./routes/index.jsx";
 import Login from "./routes/login.jsx";
 import ErrorPage from "./error-page.jsx";
-import Dashboard from './routes/dashboard.jsx'; // Corrected import
-import CourseView from './routes/course-view.jsx'; // Import CourseView
+import Dashboard from './routes/dashboard.jsx';
+import CourseView from './routes/course-view.jsx';
 import GroupRegister from './routes/groupregister.jsx';
-
-
+import PostAnnouncement from './routes/postannouncement.jsx';
 
 const router = createBrowserRouter([
   {
@@ -31,32 +29,29 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
-    path: '/courses/:courseId', 
+    path: '/courses/:courseId',
     element: <CourseView />,
     errorElement: <ErrorPage />,
   },
-
   {
     path: "/register",
     element: <Register />,
     errorElement: <ErrorPage />
   },
   {
-    path: "/announcements",
-    element: <Announcements />,
+    path: "/groupregister",
+    element: <GroupRegister />,
     errorElement: <ErrorPage />
-  }, 
-  {  path: "/groupregister",
-  element: <GroupRegister />,
-  errorElement: <ErrorPage />
-}
-
+  },
+  {
+    path: '/postannouncement/:courseId',
+    element: <PostAnnouncement />,
+    errorElement: <ErrorPage />,
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <RouterProvider router={router} />
-
   </React.StrictMode>
-
 );

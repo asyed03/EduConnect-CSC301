@@ -1,69 +1,62 @@
 .groupregister-main {
-    flex-direction: row;
+  flex-direction: row;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+
+  .groupregister-left {
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    height: 100%;
+    flex-direction: column;
+    text-align: left;
+    padding: 5rem;
 
-    .groupregister-left {
-        display: flex;
-        flex-direction: column;
-        text-align: right;
-        padding: 5rem;
+    form {
+      display: flex;
+      flex-direction: column;
 
-        form {
-            display: flex;
-            flex-direction: column;
-            input {
-                border: 1px solid rgba(128, 128, 128, 0.479);
-                border-radius: 15px;
-                padding: 1rem;
-                margin: 0.5rem 0;
-                transition: 0.2s;
+      input, textarea {
+        font-family: 'Poppins', sans-serif;
+        border: 1px solid rgba(128, 128, 128, 0.479);
+        border-radius: 15px;
+        padding: 1rem;
+        margin: 0.5rem 0;
+        transition: 0.2s;
 
-                &:hover {
-                    transform: scale(1.01);
-                    transition: 0.2s;
-                }
-            }
-
-            input[type=submit] {
-                background: linear-gradient(180deg, rgb(65, 174, 224) 0%, rgb(172, 204, 219) 100%);
-                border: none;
-                color: white;
-                font-weight: 700;
-
-                &:hover {
-                    opacity: 0.8;
-                    cursor: pointer;
-                }
-            }
+        &:hover {
+          transform: scale(1.01);
+          transition: 0.2s;
         }
+      }
+
+      input[type=submit] {
+        background: linear-gradient(180deg, rgb(65, 174, 224) 0%, rgb(172, 204, 219) 100%);
+        border: none;
+        color: white;
+        font-weight: 700;
+
+        &:hover {
+          opacity: 0.8;
+          cursor: pointer;
+        }
+      }
     }
+  }
 
   .groupregister-right {
-    background: linear-gradient(180deg, rgba(65,130,224,1) 0%, rgba(255,255,255,1) 100%);
+    background: linear-gradient(180deg, rgba(65, 130, 224, 1) 0%, rgba(255, 255, 255, 1) 100%);
     flex-grow: 4;
     height: 100%;
+    display: flex;
+    flex-direction: column;
 
     .catchphrase {
       text-align: left;
-      padding: 5rem;
-
-      h1 {
-        font-size: 6rem;
-        margin-bottom: 1rem;
-        font-family: 'cursive';
-      }
-      h2 {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-        font-family: 'cursive';
-      }
-
-      p {
-        margin-bottom: 1rem;
-      }
+      background-color: white;
+      border-radius: 20px;
+      width: 50%;
+      margin: auto;
+      padding: 1rem 5rem;
     }
   }
 }
