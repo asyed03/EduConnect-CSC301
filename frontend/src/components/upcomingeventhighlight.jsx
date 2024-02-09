@@ -10,7 +10,7 @@ function UpcomingEvents({ event }) {
       </div>
       <div className="info">
         <h3><i>{event.group}:</i> {event.title}</h3>
-        <p>{event.attending} attending</p>
+        <p>{event.attending.length} attending</p>
         <p>{event.date.toString()}</p>
       </div>
       <button className="join-event-btn">Join</button>

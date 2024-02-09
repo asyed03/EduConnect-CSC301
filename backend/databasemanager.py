@@ -472,23 +472,28 @@ class DatabaseManager(object):
             if cursor and not cursor.closed:
                 cursor.close()
 
-    def get_event_attending(self, event_id: int) -> int:
+    def get_event_attending(self, event_id: int) -> list[int]:
         """
-        Get the number of students attending an event.
+        Get all the students attending an event.
         :param event_id: The ID of the event
-        :return: The number of students attending
+        :return: The list of students attending
         """
         cursor = None
         try:
             cursor = self.connection.cursor()
-            cursor.execute("SELECT COUNT(*) FROM event_attend WHERE event_id = %s", [event_id])
-            res = cursor.fetchone()[0]
+            cursor.execute("SELECT member_id FROM event_attend WHERE event_id = %s", [event_id])
+
+            ids = []
+            for record in cursor:
+                ids.append(record[0])
+
             self.connection.commit()
-            return res
+
+            return ids
         except pg.Error as ex:
             self.connection.rollback()
             print(ex)
-            return 0
+            return []
         finally:
             if cursor and not cursor.closed:
                 cursor.close()

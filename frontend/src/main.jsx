@@ -12,6 +12,7 @@ import CourseView from './routes/course-view.jsx';
 import GroupRegister from './routes/groupregister.jsx';
 import PostAnnouncement from './routes/postannouncement.jsx';
 import PostEvent from "./routes/postevent.jsx";
+import ProfileSettings from "./routes/profilesettings.jsx";
 
 const router = createBrowserRouter([
   {
@@ -52,6 +53,11 @@ const router = createBrowserRouter([
   {
     path: '/createevent/:courseId',
     element: <PostEvent />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: '/profile',
+    element: <ProfileSettings />,
     errorElement: <ErrorPage />,
   }
 ]);

@@ -31,6 +31,8 @@ def add_endpoints(server: Flask, request_manager: RequestManager):
     server.add_url_rule("/events/create", "events-create", methods=["POST"], view_func=request_manager.post_event)
     server.add_url_rule("/events/join/<id>", "events-join", methods=["POST"], view_func=request_manager.post_event_join)
 
+    server.add_url_rule("/users/<id>", "users-get", methods=["GET"], view_func=request_manager.get_user)
+
 
 if __name__ == "__main__":
     server = create_server()

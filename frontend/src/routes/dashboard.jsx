@@ -39,7 +39,6 @@ function Dashboard() {
       // Find events
       const eventsResponse = await fetch(`http://127.0.0.1:8001/events/${sessionStorage.getItem("userid")}`);
       const eventsData = await eventsResponse.json();
-      console.log(eventsData);
       setUpcomingEvents(eventsData);
     } catch (error) {
       console.error("Error fetching data:", error);

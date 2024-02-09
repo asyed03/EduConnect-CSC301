@@ -143,6 +143,24 @@ class RequestManager(object):
 
         return self._respond(status_code=200, body=body)
 
+    def get_user(self, id):
+        """
+        Handle a GET request for a user.
+        :return: A User object
+        """
+        user = DatabaseManager.instance().get_user(id)
+
+        if user is None:
+            return self._respond(status_code=404)
+
+        res = {
+            "id": user.get_id(),
+            "username": user.get_username(),
+            "email": user.get_email()
+        }
+
+        return self._respond(status_code=200, body=res)
+
     def get_group(self, id):
         """
         Get a group.
@@ -279,11 +297,15 @@ class RequestManager(object):
             if not group:
                 continue
 
+            owner = DatabaseManager.instance().get_user(event.get_poster_id())
+            if not owner:
+                continue;
+
             e = {
                 "id": event.get_id(),
                 "title": event.get_title(),
                 "description": event.get_description(),
-                "owner": event.get_poster_id(),
+                "owner": owner.get_email(),
                 "group": group.get_name(),
                 "date": str(event.get_date()),
                 "attending": attending
