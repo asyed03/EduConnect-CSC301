@@ -16,9 +16,7 @@ def add_endpoints(server: Flask, request_manager: RequestManager):
     server.add_url_rule("/", "/", methods=["GET"], view_func=request_manager.get_index)
     server.add_url_rule("/login", "login", methods=["POST"], view_func=request_manager.post_login)
     server.add_url_rule("/register", "register", methods=["POST"], view_func=request_manager.post_register)
-    server.add_url_rule("/announcements/<id>", "announcements-get", methods=["GET"], view_func=request_manager.get_announcement)
-    # server.add_url_rule("/announcements/list", "announcements-list", methods=["GET"], view_func=request_manager.get_announcements)
-    # server.add_url_rule("/announcements/course/<number:id>", "announcements-course-get", methods=["GET"], view_func=request_manager.get_course_announcements)
+    server.add_url_rule("/announcements/<id>", "announcements-get", methods=["GET"], view_func=request_manager.get_course_announcements)
     server.add_url_rule("/announcements/create", "announcements-create", methods=["POST"], view_func=request_manager.post_announcement)
     # server.add_url_rule("/announcements/delete", "announcements-delete", methods=["DELETE"], view_func=request_manager.delete_announcement)
 

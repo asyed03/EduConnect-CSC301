@@ -29,7 +29,7 @@ function Login() {
       setErrorMessage(json.message);
     }
     else {
-      setErrorMessage("");
+      window.open("/dashboard", "_self");
     }
 
     console.log("POST: ", res)
@@ -53,7 +53,7 @@ function Login() {
             <div className="sign-up">
               <p>Don't have an account?</p>
               <Link to="/register">
-                <a>SIGN UP</a>
+                <span>SIGN UP</span>
               </Link>
             </div>
           </form>

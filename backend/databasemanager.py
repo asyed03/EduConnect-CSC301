@@ -134,6 +134,32 @@ class DatabaseManager(object):
             if cursor and not cursor.closed:
                 cursor.close()
 
+    def get_announcements(self, group_id: int) -> list:
+        """
+        Get all the announcements in the given group.
+        :param group_id: The group to look for announcements in
+        :return: A list of all the announcements in the group
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT * FROM announcement WHERE group_id = %s", [group_id])
+            if cursor.rowcount <= 0:
+                return []
+
+            announcements = []
+            for record in cursor:
+                ann = Announcement(record[0], record[1], record[2], record[4], record[3])
+                announcements.append(ann)
+
+            return announcements
+        except pg.Error as ex:
+            print(ex)
+            return []
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
     def get_announcement(self, identifier: int) -> Announcement | None:
         """
         Get an announcement with the given identifier.

@@ -1,0 +1,26 @@
+.announcement {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 10px;
+  outline: 1px solid rgba(0, 0, 0, 0.185);
+  margin: 1rem;
+  transition: 0.2s;
+  width: 90%;
+
+  &:hover {
+    width: 100%;
+    transition: 0.2s;
+  }
+
+  h5 {
+    font-weight: 500;
+    font-size: 22px;
+    margin: 0;
+  }
+
+  h6 {
+    margin: 0;
+    opacity: 0.8;
+    font-weight: 300;
+  }
+}

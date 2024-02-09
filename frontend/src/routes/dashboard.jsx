@@ -27,7 +27,7 @@ function Dashboard() {
       }
     }
 
-    fetchDashboardData();
+    //fetchDashboardData();
     // Example data
     const egData = {
       "activeCourses": [
@@ -37,7 +37,7 @@ function Dashboard() {
           "description": "Learn the basics of React, a popular JavaScript library for building user interfaces.",
           "instructor": "John Doe",
           "noOfStudentsEnrolled": 150,
-          "image": "https://picsum.photos/seed/picsum/200"
+          "image": "https://picsum.photos/200"
         },
         {
           "id": 2,
@@ -45,7 +45,7 @@ function Dashboard() {
           "description": "Take your React skills to the next level with advanced concepts and patterns.",
           "instructor": "Jane Doe",
           "noOfStudentsEnrolled": 150,
-          "image": "https://picsum.photos/seed/picsum/200"
+          "image": "https://picsum.photos/300"
         },
         {
           "id": 3,
@@ -53,7 +53,7 @@ function Dashboard() {
           "description": "Take your React skills to the next level with advanced concepts and patterns.",
           "instructor": "Jane Doe",
           "noOfStudentsEnrolled": 150,
-          "image": "https://picsum.photos/seed/picsum/200"
+          "image": "https://picsum.photos/400"
         },
         {
           "id": 4,
@@ -61,7 +61,7 @@ function Dashboard() {
           "description": "Take your React skills to the next level with advanced concepts and patterns.",
           "instructor": "Jane Doe",
           "noOfStudentsEnrolled": 150,
-          "image": "https://picsum.photos/seed/picsum/200"
+          "image": "https://picsum.photos/100"
         }
       ],
       "upcomingEvents": [
@@ -71,7 +71,7 @@ function Dashboard() {
           "description": "Join us for a fun and informative meetup about React.",
           "date": "2024-03-01T18:00:00Z",
           "noOfStudentsEnrolled": 15,
-          "image": "https://picsum.photos/seed/picsum/200"
+          "image": "https://picsum.photos/500"
         },
         {
           "id": 2,
@@ -79,7 +79,7 @@ function Dashboard() {
           "description": "A hands-on workshop where you'll build a small project using React.",
           "date": "2024-04-01T09:00:00Z",
           "noOfStudentsEnrolled": 10,
-          "image": "https://picsum.photos/seed/picsum/200"
+          "image": "https://picsum.photos/600"
         },
         {
           "id": 3,
@@ -87,7 +87,7 @@ function Dashboard() {
           "description": "A hands-on workshop where you'll build a small project using React.",
           "date": "2024-04-01T09:00:00Z",
           "noOfStudentsEnrolled": 10,
-          "image": "https://picsum.photos/seed/picsum/200"
+          "image": "https://picsum.photos/700"
         },
         {
           "id": 4,
@@ -95,7 +95,7 @@ function Dashboard() {
           "description": "A hands-on workshop where you'll build a small project using React.",
           "date": "2024-04-01T09:00:00Z",
           "noOfStudentsEnrolled": 10,
-          "image": "https://picsum.photos/seed/picsum/200"
+          "image": "https://picsum.photos/200"
         },
         {
           "id": 5,
@@ -103,7 +103,7 @@ function Dashboard() {
           "description": "A hands-on workshop where you'll build a small project using React.",
           "date": "2024-04-01T09:00:00Z",
           "noOfStudentsEnrolled": 10,
-          "image": "https://picsum.photos/seed/picsum/200"
+          "image": "https://picsum.photos/800"
         }
       ]
     }

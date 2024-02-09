@@ -2,15 +2,17 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Menu from '../components/menu';
-import '../styles/course-view.css';
+import '../styles/CourseView.scss';
+import AnnouncementHighlight from '../components/announcementhighlight';
 
 const CourseView = () => {
   const { courseId } = useParams();
   const [courseData, setCourseData] = useState(null);
   const [eventsData, setEventsData] = useState([]);
+  const [announcements, setAnnouncements] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
+    async function fetchData() {
       try {
         if (!courseId) {
           // Set default data if courseId is not provided
@@ -28,6 +30,11 @@ const CourseView = () => {
             { id: 2, eventName: 'Hands-on Workshop', numberOfAttendees: 80 },
           ]);
 
+          setAnnouncements([
+            { poster: "Ibrahim", message: "This is a test announcement for this course.", date: new Date(Date.now()) },
+            { poster: "Ibrahim 2", message: "This is yet another test announcement for this same course.", date: new Date(Date.now()) }
+          ]);
+
           return;
         }
 
@@ -43,7 +50,7 @@ const CourseView = () => {
       } catch (error) {
         console.error('Error fetching course data:', error);
       }
-    };
+    }
 
     fetchData();
   }, [courseId]);
@@ -56,12 +63,17 @@ const CourseView = () => {
       instructorName: 'Jane Smith',
       teachingAssistants: ['TA1', 'TA2', 'TA3'],
       numberOfStudents: 120,
-      backgroundImage: 'https://picsum.photos/seed/picsum/200',
+      backgroundImage: 'https://picsum.photos/1920/1080',
     });
 
     setEventsData([
       { id: 1, eventName: 'Orientation Session', numberOfAttendees: 50 },
       { id: 2, eventName: 'Hands-on Workshop', numberOfAttendees: 80 },
+    ]);
+
+    setAnnouncements([
+      { poster: "Ibrahim", message: "This is a test announcement for this course.", date: new Date(Date.now()) },
+      { poster: "Ibrahim 2", message: "This is yet another test announcement for this same course.", date: new Date(Date.now()) }
     ]);
   }
 
@@ -94,11 +106,13 @@ const CourseView = () => {
               </li>
             ))}
           </ul>
+        </div>
 
-          {/* Button to view messages */}
-          <button onClick={() => { /* Handle click to view messages */ }}>
-            View Messages
-          </button>
+        <div className="course-announcements">
+          <h3>Course Announcements</h3>
+          { announcements.map((announcement) => (
+            <AnnouncementHighlight announcement={announcement} />
+          ))}
         </div>
       </div>
     </>

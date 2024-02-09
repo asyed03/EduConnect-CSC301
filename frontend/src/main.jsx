@@ -3,7 +3,6 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
-import Announcements from "./routes/announcements.jsx";
 import Register from './routes/register.jsx'
 import Index from "./routes/index.jsx";
 import Login from "./routes/login.jsx";
@@ -36,13 +35,7 @@ const router = createBrowserRouter([
     path: "/register",
     element: <Register />,
     errorElement: <ErrorPage />
-  },
-  {
-    path: "/announcements",
-    element: <Announcements />,
-    errorElement: <ErrorPage />
   }
-
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
