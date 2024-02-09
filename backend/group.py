@@ -1,14 +1,15 @@
 from datetime import datetime
-from user import User  # Assuming users.py is in the same directory
+
 
 class Group:
     """
     Representation of an educational group.
     """
 
-    def __init__(self, group_id: int, name: str, owner: User, creation_date: datetime = None):
+    def __init__(self, group_id: int, name: str, description: str, owner: int, creation_date: datetime = None):
         self.group_id = group_id
         self.name = name
+        self.description = description
         self.owner = owner
         self.creation_date = creation_date or datetime.now()
 
@@ -17,6 +18,9 @@ class Group:
 
     def get_name(self):
         return self.name
+
+    def get_description(self):
+        return self.description
 
     def get_owner(self):
         return self.owner

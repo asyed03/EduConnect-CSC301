@@ -7,63 +7,35 @@ import UpcomingEvents from "../components/upcomingeventhighlight";
 
 function Dashboard() {
   const [activeCourses, setActiveCourses] = useState([]);
+  const [allCourses, setAllCourses] = useState([]);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
+
+  async function fetchData() {
+    try {
+      const coursesResponse = await fetch(`http://127.0.0.1:8001/groups/user/${sessionStorage.getItem("userid")}`);
+      const coursesData = await coursesResponse.json();
+      setActiveCourses(coursesData);
+
+      // Find all other courses
+      const allCoursesResponse = await fetch("http://127.0.0.1:8001/groups")
+      const allCoursesData = await allCoursesResponse.json();
+      setAllCourses(allCoursesData);
+
+      //setUpcomingEvents(eventsData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
 
   useEffect(() => {
     // Fetch active courses and upcoming events data
-
     async function fetchDashboardData() {
-      try {
-        const coursesResponse = await fetch("http://127.0.0.1:8001/courses");
-        const coursesData = await coursesResponse.json();
-
-        const eventsResponse = await fetch("http://127.0.0.1:8001/upcoming-events");
-        const eventsData = await eventsResponse.json();
-
-        setActiveCourses(coursesData);
-        setUpcomingEvents(eventsData);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
+      await fetchData();
     }
 
-    //fetchDashboardData();
+    fetchDashboardData();
     // Example data
     const egData = {
-      "activeCourses": [
-        {
-          "id": 1,
-          "title": "CSC309",
-          "description": "Learn the basics of React, a popular JavaScript library for building user interfaces.",
-          "instructor": "John Doe",
-          "noOfStudentsEnrolled": 150,
-          "image": "https://picsum.photos/200"
-        },
-        {
-          "id": 2,
-          "title": "CSC311",
-          "description": "Take your React skills to the next level with advanced concepts and patterns.",
-          "instructor": "Jane Doe",
-          "noOfStudentsEnrolled": 150,
-          "image": "https://picsum.photos/300"
-        },
-        {
-          "id": 3,
-          "title": "CSC301",
-          "description": "Take your React skills to the next level with advanced concepts and patterns.",
-          "instructor": "Jane Doe",
-          "noOfStudentsEnrolled": 150,
-          "image": "https://picsum.photos/400"
-        },
-        {
-          "id": 4,
-          "title": "CSC347",
-          "description": "Take your React skills to the next level with advanced concepts and patterns.",
-          "instructor": "Jane Doe",
-          "noOfStudentsEnrolled": 150,
-          "image": "https://picsum.photos/100"
-        }
-      ],
       "upcomingEvents": [
         {
           "id": 1,
@@ -108,9 +80,34 @@ function Dashboard() {
       ]
     }
 
-    setActiveCourses(egData["activeCourses"]);
+    //setActiveCourses(egData["activeCourses"]);
     setUpcomingEvents(egData["upcomingEvents"]);
   }, []);
+
+  async function joinGroup(course) {
+    const body = {
+      "userid": sessionStorage.getItem("userid")
+    };
+
+    const response = await fetch(`http://127.0.0.1:8001/groups/join/${course.id}`, {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: {
+        "Content-type": "application/json"
+      }
+    });
+
+    const res = response.status;
+    const json = await response.json();
+
+    if (res == 200) {
+      fetchData();
+    }
+
+    console.log(activeCourses);
+
+    console.log("POST: ", res)
+  }
 
   return (
     <>
@@ -118,35 +115,49 @@ function Dashboard() {
 
       <div className="dashboard">
         <div className="group-main">
+          <Link to="/groupregister">
+            <button className="create-btn">Create Course</button>
+          </Link>
 
           {/* Active Courses Section */}
           <div className="active-courses">
             <h2>Active courses</h2>
             <div className="course-block">
-              {activeCourses.map(course => (
-                <Link to={`/courses/${course.id}`} key={course.id}>
-                  <CourseHighlight course={course} />
-                </Link>
-              ))}
+              {activeCourses != null && activeCourses.length > 0 ?
+                activeCourses.map(course => (
+                  <Link to={`/courses/${course.id}`} key={course.id}>
+                    <CourseHighlight course={course} />
+                  </Link>
+                ))
+                :
+                (<h5>You are not registered in any courses.</h5>)
+              }
             </div>
           </div>
 
-          {/* Previous Courses Section */}
+          {/* All Courses Section */}
           <div className="active-courses">
-            <h2>Completed courses</h2>
+            <h2>All courses</h2>
             <div className="course-block">
-              {activeCourses.map(course => (
-                <Link to={`/courses/${course.id}`} key={course.id}>
-                  <CourseHighlight course={course} />
-                </Link>
-              ))}
+              {allCourses != null && allCourses.length > 0 ?
+                allCourses.map(course => (
+                  <a onClick={() => joinGroup(course)}>
+                    <CourseHighlight course={course} join={true} />
+                  </a>
+                ))
+                :
+                (<h5>There are no courses to display.</h5>)
+              }
             </div>
           </div>
         </div>
 
         <div className="group-events">
+          <Link to="/groupregister">
+            <button className="create-btn">Create Event</button>
+          </Link>
           {/* Upcoming Events Section */}
-          <h2>Upcoming Events</h2>
+          <h2>Upcoming events</h2>
           <div className="upcoming-events">
             {upcomingEvents.map(event => (
               <Link to={`/events/${event.id}`} key={event.id}>

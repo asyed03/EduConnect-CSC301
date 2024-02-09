@@ -29,6 +29,7 @@ function Login() {
       setErrorMessage(json.message);
     }
     else {
+      sessionStorage.setItem("userid", json.id);
       window.open("/dashboard", "_self");
     }
 

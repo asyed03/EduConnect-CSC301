@@ -12,6 +12,12 @@
   max-width: 20vw;
 }
 
+.success-message {
+  color: green;
+  font-style: italic;
+  max-width: 20vw;
+}
+
 #error-page {
   width: 50%;
   margin: auto;
@@ -38,4 +44,20 @@
 
 .landing p {
   opacity: 0.8;
+}
+
+button.create-btn {
+  border-radius: 10px;
+  padding: 1rem;
+  border: 1px solid green;
+  background-color: rgba(0, 128, 0, 0.082);
+  font-family: 'Poppins', sans-serif;
+  width: 150px;
+  transition: 0.2s;
+}
+
+button.create-btn:hover {
+  cursor: pointer;
+  width: 200px;
+  transition: 0.2s;
 }

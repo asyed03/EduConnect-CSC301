@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS edu_user (
 CREATE TABLE IF NOT EXISTS edu_group (
     id serial NOT NULL,
     name text NOT NULL,
+    description text NOT NULL,
     owner integer NOT NULL REFERENCES edu_user(id),
     creation_date timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY(id)
