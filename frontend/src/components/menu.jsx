@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import '../styles/Menu.scss';
 import '../styles/LeftMenu.scss';
 
-function Menu() {
+function Menu(props) {
   const [profilePic, setProfilePic] = useState('');
   const [expanded, setExpanded] = useState(false);
   const [notifications, setNotifications] = useState([]);
@@ -49,6 +49,12 @@ function Menu() {
     */
   }, []);
 
+  function handleSearch(e) {
+    if (props.handleSearch != undefined) {
+      props.handleSearch(e);
+    }
+  }
+
   return (
     <>
       <div className="menu">
@@ -56,7 +62,7 @@ function Menu() {
           <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="green" className="bi bi-list" viewBox="0 0 16 16" onClick={() => setExpanded(!expanded)}>
             <path fillRule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5" />
           </svg>
-          <input type="text" placeholder="Search course name" />
+          <input type="text" placeholder="Search course name" onChange={handleSearch} />
         </div>
 
         <div className="icons">

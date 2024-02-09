@@ -7,19 +7,33 @@ import UpcomingEvents from "../components/upcomingeventhighlight";
 
 function Dashboard() {
   const [activeCourses, setActiveCourses] = useState([]);
+  const [activeSearched, setActiveSearched] = useState(null);
   const [allCourses, setAllCourses] = useState([]);
+  const [allSearched, setAllSearched] = useState(null);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
 
   async function fetchData() {
     try {
       const coursesResponse = await fetch(`http://127.0.0.1:8001/groups/user/${sessionStorage.getItem("userid")}`);
       const coursesData = await coursesResponse.json();
-      setActiveCourses(coursesData);
-
+      
       // Find all other courses
-      const allCoursesResponse = await fetch("http://127.0.0.1:8001/groups")
+      const allCoursesResponse = await fetch("http://127.0.0.1:8001/groups");
       const allCoursesData = await allCoursesResponse.json();
-      setAllCourses(allCoursesData);
+      
+      // Remove overlap
+      const tempAll = allCoursesData.filter((course) => {
+        for (let c of coursesData) {
+          if (c.id == course.id) {
+            return false;
+          }
+        }
+
+        return true;
+      });
+
+      setActiveCourses(coursesData);
+      setAllCourses(tempAll);
 
       //setUpcomingEvents(eventsData);
     } catch (error) {
@@ -98,8 +112,6 @@ function Dashboard() {
     });
 
     const res = response.status;
-    const json = await response.json();
-
     if (res == 200) {
       fetchData();
     }
@@ -109,9 +121,36 @@ function Dashboard() {
     console.log("POST: ", res)
   }
 
+  function handleSearch(e) {
+    const text = e.target.value;
+
+    if (text.length < 2) {
+      setActiveSearched(null);
+      setAllSearched(null);
+      return;
+    }
+
+    let tempActive = [];
+    for (let c of activeCourses) {
+      if (c.title.toLowerCase().includes(text.toLowerCase()) || c.description.toLowerCase().includes(text.toLowerCase())) {
+        tempActive.push(c);
+      }
+    }
+    
+    let tempAll = [];
+    for (let c of allCourses) {
+      if (c.title.toLowerCase().includes(text.toLowerCase()) || c.description.toLowerCase().includes(text.toLowerCase())) {
+        tempAll.push(c);
+      }
+    }
+
+    setActiveSearched(tempActive);
+    setAllSearched(tempAll);
+  }
+
   return (
     <>
-      <Menu />
+      <Menu handleSearch={handleSearch} />
 
       <div className="dashboard">
         <div className="group-main">
@@ -123,14 +162,24 @@ function Dashboard() {
           <div className="active-courses">
             <h2>Active courses</h2>
             <div className="course-block">
-              {activeCourses != null && activeCourses.length > 0 ?
-                activeCourses.map(course => (
-                  <Link to={`/courses/${course.id}`} key={course.id}>
-                    <CourseHighlight course={course} />
-                  </Link>
-                ))
-                :
-                (<h5>You are not registered in any courses.</h5>)
+              {
+                activeSearched != null ?
+                  activeSearched.map(course => (
+                    <Link to={`/courses/${course.id}`} key={course.id}>
+                      <CourseHighlight course={course} />
+                    </Link>
+                  ))
+                  :
+                  (
+                    activeCourses != null && activeCourses.length > 0 ?
+                      activeCourses.map(course => (
+                        <Link to={`/courses/${course.id}`} key={course.id}>
+                          <CourseHighlight course={course} />
+                        </Link>
+                      ))
+                      :
+                      (<h5>You are not registered in any courses.</h5>)
+                  )
               }
             </div>
           </div>
@@ -139,14 +188,24 @@ function Dashboard() {
           <div className="active-courses">
             <h2>All courses</h2>
             <div className="course-block">
-              {allCourses != null && allCourses.length > 0 ?
-                allCourses.map(course => (
-                  <a onClick={() => joinGroup(course)}>
-                    <CourseHighlight course={course} join={true} />
-                  </a>
-                ))
-                :
-                (<h5>There are no courses to display.</h5>)
+              {
+                allSearched != null ?
+                  allSearched.map(course => (
+                    <Link to={`/courses/${course.id}`} key={course.id}>
+                      <CourseHighlight course={course} />
+                    </Link>
+                  ))
+                  :
+                  (
+                    allCourses != null && allCourses.length > 0 ?
+                      allCourses.map(course => (
+                        <a onClick={() => joinGroup(course)} key={course.id}>
+                          <CourseHighlight course={course} join={true} />
+                        </a>
+                      ))
+                      :
+                      (<h5>There are no courses to display.</h5>)
+                  )
               }
             </div>
           </div>

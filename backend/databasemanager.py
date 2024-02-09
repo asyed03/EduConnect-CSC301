@@ -269,7 +269,7 @@ class DatabaseManager(object):
             if cursor and not cursor.closed:
                 cursor.close()
 
-    def get_all_groups(self) -> list[Group]:
+    def get_all_groups(self, exclude_user: int = -1) -> list[Group]:
         """
         Get all groups.
         :return: A list of all groups.
