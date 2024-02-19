@@ -1,8 +1,8 @@
-import psycopg2 as pg
 from user import User
-from announcement import Announcement
+import psycopg2 as pg
 from event import Event
 from group import Group
+from announcement import Announcement
 
 
 class DatabaseManager(object):
