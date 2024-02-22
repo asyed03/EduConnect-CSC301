@@ -534,3 +534,63 @@ class DatabaseManager(object):
         finally:
             if cursor and not cursor.closed:
                 cursor.close()
+
+    def insert_chat_personal(self, sender_id: int, receiver_id: int, content: str) -> bool:
+        """
+        Inserts a chat into the specified group or personal chat
+        :param sender_id: The id of the sender of the message
+        :param receiver_id: The id of the receiver of the message.
+        :param content: The contents of the message
+        :return: A boolean indicating whether the insertion has been complete. If complete, then True, else False
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            
+            cursor.execute("INSERT INTO personal_chat(content, sender_id, receiver_id) VALUES(%s, %s, %s) RETURNING id;",
+                           [content, sender_id, receiver_id])
+
+            new_id = cursor.fetchone()
+            if new_id[0] <= 0:
+                return None
+
+            self.connection.commit()
+            print(f"Created chat with ID: {new_id[0]}")
+            return True
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return False
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
+    def insert_chat_group(self, sender_id: int, group_id: int, content: str) -> bool:
+        """
+        Inserts a chat into the specified group or personal chat
+        :param sender_id: The id of the sender of the message
+        :param receiver_id: The id of the receiver of the message.
+        :param content: The contents of the message
+        :return: A boolean indicating whether the insertion has been complete. If complete, then True, else False
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            
+            cursor.execute("INSERT INTO group_chat(content, sender_id, group_id) VALUES(%s, %s, %s) RETURNING id;",
+                           [content, sender_id, group_id])
+
+            new_id = cursor.fetchone()
+            if new_id[0] <= 0:
+                return None
+
+            self.connection.commit()
+            print(f"Created chat with ID: {new_id[0]}")
+            return True
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return False
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
