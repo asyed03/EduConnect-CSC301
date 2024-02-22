@@ -9,7 +9,7 @@ socketio = SocketIO(app, cors_allowed_origins="*", transport=["websocket"])
 @socketio.on("message")
 def handle_message(msg):
     print(f"Message {msg}")
-    socketio.emit("messageres", str(random.random()))
+    socketio.emit("messageres", "received")
 
 
 if __name__ == "__main__":
