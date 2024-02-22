@@ -5,6 +5,7 @@ from databasemanager import DatabaseManager
 from requestmanagers.userrequestmanager import UserRequestManager
 from requestmanagers.grouprequestmanager import GroupRequestManager
 from requestmanagers.eventrequestmanager import EventRequestManager
+from requestmanagers.internalrequestmanager import InternalRequestManager
 from requestmanagers.announcementrequestmanager import AnnouncementRequestManager
 
 PORT = 8001
@@ -43,6 +44,10 @@ def add_announcement_endpoints(server: Flask, request_manager: AnnouncementReque
     server.add_url_rule("/announcements/create", "announcements-create", methods=["POST"], view_func=request_manager.post_announcement)
 
 
+def add_internal_endpoints(server: Flask, request_manager: InternalRequestManager):
+    server.add_url_rule("/internal/add_chat", "add-chat", methods=["POST"], view_func=request_manager.post_chat)
+
+
 if __name__ == "__main__":
     server = create_server()
 
@@ -57,6 +62,9 @@ if __name__ == "__main__":
 
     announcement_request_manager = AnnouncementRequestManager()
     add_announcement_endpoints(server, announcement_request_manager)
+
+    internal_request_manager = InternalRequestManager()
+    add_internal_endpoints(server, internal_request_manager)
 
     DatabaseManager.instance()  # Initial call to .instance() will setup the database
     # server.run(debug=True, port=PORT)
