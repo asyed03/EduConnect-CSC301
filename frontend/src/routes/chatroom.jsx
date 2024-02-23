@@ -9,7 +9,7 @@ const Chatroom = () => {
     const [msg, setMsg] = useState("");
     const [results, setResults] = useState([]);
 
-    const socket = io.connect("http://127.0.0.1:5000", { transports: ["websocket"], debug: true });
+    const socket = io.connect("http://127.0.0.1:8002", { transports: ["websocket"], debug: true });
 
     useEffect(() => {
         const handleMessage = (msg) => {
@@ -24,8 +24,8 @@ const Chatroom = () => {
     }, []);
 
     function sendMessage() {
-        console.log("Seing message");
-        socket.emit("message", msg);
+        console.log("Sending message");
+        socket.emit("group_message", msg);
     }
 
     return (
