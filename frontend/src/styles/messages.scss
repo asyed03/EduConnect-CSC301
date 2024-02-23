@@ -1,0 +1,156 @@
+h2 {
+  font-weight: 400;
+  font-size: 24px;
+}
+.messages-container {
+    display: flex;
+    position:relative;
+    height: calc(100% - 7rem);
+    width: 100%;
+    padding: 7rem 5rem 0 5rem;
+    // margin-left: 35px;
+    // margin-top: 7rem;
+  
+    .rooms {
+      width: 30%;
+      border-right: 1px solid #ccc;
+      background-color: white;
+   
+      margin: 1rem 0 0 1rem;
+      border-radius: 10px 0px 0px 10px;
+      // box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+      // outline: 1px solid rgba(0, 0, 0, 0.185);
+      box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+      height: 100%;
+      min-height: fit-content;
+      .roomsHeader {
+        padding: 2rem 2rem 0 2rem;
+      }
+      .group-message-search{
+        box-shadow: 1px 1px 15px rgba(0, 0, 0, 0.185) ;
+        width: 70%;
+        margin-bottom: 30px;
+      }
+      .room {
+        padding: 2rem;
+        cursor: pointer;
+        display: flex;
+  
+        &:hover, &.selected {
+          background-color: #0AB28B30;
+        }
+        
+        .image {
+          max-width:70px;
+          max-height: 70px;
+          padding-right:10px;
+        }
+        .details {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          .top-details{
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: space-between;
+            
+          .roomName {
+
+          }
+            .time {
+              font-size: small;
+              color: #8998A980;
+            }
+
+          }
+          .roomMessage {
+            font-size: small;
+            color: #8998A9;
+          }
+         
+        }
+
+      }
+     
+    }
+  
+    .selected-room {
+      width: 60%;
+      padding: 0px;
+      margin: 1rem 1rem 0 0;
+      .selectedRoomHeader {
+        background-color: white;
+        padding: 20px;
+        box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+        h2 {
+          margin-bottom: 20px;
+        }
+    }
+  
+    .message-list {
+      list-style: none;
+      padding-left: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    
+      li {
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 8px;
+        max-width: 70%; /* Adjust as needed */
+        word-wrap: break-word;
+        
+    
+        &.sent {
+          background-color: #4caf50; /* Green color for messages sent by you */
+          color: #fff; /* White text color */
+          align-self: flex-end;
+          text-align: right;
+          border-radius: 50px 100px 0px 50px;
+          right:0px;
+          position: relative;
+          width: max-content;
+          padding: 10px 15px;
+        }
+    
+        &.received {
+          background-color: white; /* Light gray color for received messages */
+          border-radius: 100px 50px 50px 0px;
+          width: max-content;
+          padding: 10px 15px;
+        }
+    
+        .sender {
+          font-size: 0.8em;
+          color: #0AB28B; /* Light gray color for sender information */
+          margin-right: 5px;
+        }
+      }
+    }
+    .message-input {
+      display: flex;
+      margin-top: 20px;
+    
+      input {
+        flex-grow: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+    
+      button {
+        margin-left: 10px;
+        padding: 10px;
+        background-color: #4caf50; /* Green color for the send button */
+        color: #fff; /* White text color */
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    }
+    
+    
+    }
+  }
+  
