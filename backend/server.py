@@ -45,7 +45,7 @@ def add_announcement_endpoints(server: Flask, request_manager: AnnouncementReque
 
 
 def add_internal_endpoints(server: Flask, request_manager: InternalRequestManager):
-    server.add_url_rule("/internal/add_chat", "add-chat", methods=["POST"], view_func=request_manager.post_chat)
+    server.add_url_rule("/internal/chat/group", "add-chat-group", methods=["POST"], view_func=request_manager.post_chat_group)
 
 
 if __name__ == "__main__":

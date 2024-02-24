@@ -25,7 +25,14 @@ const Chatroom = () => {
 
     function sendMessage() {
         console.log("Sending message");
-        socket.emit("group_message", msg);
+
+        const body = {
+            "sender": 1,
+            "group": 1,
+            "content": msg
+          };
+
+        socket.emit("group_message", JSON.stringify(body));
     }
 
     return (

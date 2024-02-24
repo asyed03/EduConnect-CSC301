@@ -2,155 +2,177 @@ h2 {
   font-weight: 400;
   font-size: 24px;
 }
+
 .messages-container {
-    display: flex;
-    position:relative;
-    height: calc(100% - 7rem);
-    width: 100%;
-    padding: 7rem 5rem 0 5rem;
-    // margin-left: 35px;
-    // margin-top: 7rem;
-  
-    .rooms {
-      width: 30%;
-      border-right: 1px solid #ccc;
-      background-color: white;
-   
-      margin: 1rem 0 0 1rem;
-      border-radius: 10px 0px 0px 10px;
-      // box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
-      // outline: 1px solid rgba(0, 0, 0, 0.185);
-      box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-      height: 100%;
-      min-height: fit-content;
-      .roomsHeader {
-        padding: 2rem 2rem 0 2rem;
+  display: flex;
+  margin-top: 9rem;
+  margin-left: 7rem;
+  margin-right: 7rem;
+
+  .rooms {
+    flex-grow: 1;
+    border-right: 1px solid #cccccc8c;
+    background-color: white;
+    box-shadow: rgba(100, 100, 111, 0.1) 0px 7px 29px 0px;
+
+    .roomsHeader {
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid #cccccc8c;
+
+      input {
+        background-color: #F3F4F6;
+        padding: 1rem 2rem;
+        border: none;
+        position: relative;
+        border-radius: 5px;
+        box-shadow: 0px 13px 15px rgba(0, 0, 0, 0.03);
+        transition: 0.2s;
+        width: 50%;
+        font-family: 'Poppins', sans-serif;
+
+        &:hover {
+          width: 80%;
+          transition: 0.2s;
+        }
+
+        &:focus-visible {
+          outline: 2px solid rgba(128, 128, 128, 0.185);
+          width: 80%;
+        }
       }
-      .group-message-search{
-        box-shadow: 1px 1px 15px rgba(0, 0, 0, 0.185) ;
-        width: 70%;
-        margin-bottom: 30px;
+    }
+
+    .room {
+      padding: 2rem;
+      cursor: pointer;
+      display: flex;
+      transition: 0.2s;
+
+      &:hover,
+      &.selected {
+        background-color: #0ab28b15;
+        transition: 0.2s;
       }
-      .room {
-        padding: 2rem;
-        cursor: pointer;
+
+      &.selected {
+        outline: 1px solid #cccccc8c;
+      }
+
+      .image {
+        max-width: 70px;
+        max-height: 70px;
+        padding-right: 10px;
+      }
+
+      .details {
         display: flex;
-  
-        &:hover, &.selected {
-          background-color: #0AB28B30;
-        }
-        
-        .image {
-          max-width:70px;
-          max-height: 70px;
-          padding-right:10px;
-        }
-        .details {
+        flex-direction: column;
+        justify-content: center;
+        width: 100%;
+
+        .top-details {
           display: flex;
-          flex-direction: column;
-          justify-content: center;
-          .top-details{
-            display: flex;
-            flex-wrap: nowrap;
-            justify-content: space-between;
-            
-          .roomName {
+          flex-wrap: nowrap;
+          justify-content: space-between;
 
-          }
-            .time {
-              font-size: small;
-              color: #8998A980;
-            }
-
-          }
-          .roomMessage {
+          .time {
             font-size: small;
-            color: #8998A9;
+            color: #8998A980;
           }
-         
+
+        }
+
+        .roomMessage {
+          font-size: small;
+          color: #8998A9;
         }
 
       }
-     
     }
-  
-    .selected-room {
-      width: 60%;
-      padding: 0px;
-      margin: 1rem 1rem 0 0;
-      .selectedRoomHeader {
-        background-color: white;
-        padding: 20px;
-        box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
-        h2 {
-          margin-bottom: 20px;
-        }
+  }
+
+  .selected-room {
+    flex-grow: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .selectedRoomHeader {
+      background-color: white;
+      padding: 0 1.5rem;
+      box-shadow: rgba(100, 100, 111, 0.05) 0px 7px 29px 0px;
     }
-  
+
     .message-list {
       list-style: none;
-      padding-left: 0;
-      padding: 20px;
+      padding: 3rem;
       display: flex;
-      flex-direction: column;
-    
+      flex-direction: column-reverse;
+      height: 45vh;
+      max-height: 45vh;
+      overflow-y: scroll;
+
       li {
         margin-bottom: 10px;
-        padding: 10px;
-        border-radius: 8px;
-        max-width: 70%; /* Adjust as needed */
         word-wrap: break-word;
-        
-    
-        &.sent {
-          background-color: #4caf50; /* Green color for messages sent by you */
-          color: #fff; /* White text color */
-          align-self: flex-end;
-          text-align: right;
-          border-radius: 50px 100px 0px 50px;
-          right:0px;
-          position: relative;
-          width: max-content;
-          padding: 10px 15px;
-        }
-    
-        &.received {
-          background-color: white; /* Light gray color for received messages */
-          border-radius: 100px 50px 50px 0px;
-          width: max-content;
-          padding: 10px 15px;
-        }
-    
+        padding: 12px 15px;
+
         .sender {
           font-size: 0.8em;
-          color: #0AB28B; /* Light gray color for sender information */
-          margin-right: 5px;
+          margin-right: 10px;
+        }
+
+        &.sent {
+          background-color: #4caf50;
+          color: #fff;
+          align-self: flex-end;
+          border-radius: 50px 100px 0px 50px;
+          padding-right: 2rem;
+          width: max-content;
+
+          .sender {
+            color: rgba(0, 0, 0, 0.336);
+          }
+        }
+
+        &.received {
+          background-color: white;
+          border-radius: 100px 50px 50px 0px;
+          width: max-content;
+          padding-left: 2rem;
+
+          .sender {
+            color: #0AB28B;
+          }
         }
       }
     }
+
+
     .message-input {
       display: flex;
+      margin-left: 3rem;
+      margin-right: 3rem;
       margin-top: 20px;
-    
+
       input {
         flex-grow: 1;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
+        font-family: 'Poppins', sans-serif;
+        padding-left: 3rem;
+        border: 1px solid #cccccc8c;
+        border-radius: 50px;
       }
-    
+
       button {
         margin-left: 10px;
         padding: 10px;
-        background-color: #4caf50; /* Green color for the send button */
-        color: #fff; /* White text color */
+        background-color: #4caf50;
+        color: #fff;
         border: none;
         border-radius: 5px;
         cursor: pointer;
       }
     }
-    
-    
-    }
   }
-  
+}
