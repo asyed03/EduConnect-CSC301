@@ -41,7 +41,7 @@ class DatabaseManager(object):
             self.connection.commit()
 
     def _setup_database(self):
-        # self._clear_database()
+        self._clear_database()
         cursor, schema_file = None, None
 
         try:
@@ -173,6 +173,42 @@ class DatabaseManager(object):
             self.connection.rollback()
             print(ex)
             return None
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
+    def get_group_messages(self, group_id: int) -> list:
+        """
+        Get all the messages in the given group.
+        :param group_id: The ID of the group
+        :return: A list of messages
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT * FROM group_chat WHERE group_id = %s", [group_id])
+            if cursor.rowcount <= 0:
+                return []
+
+            messages = []
+            for record in cursor:
+                user = self.get_user(record[2])
+
+                if user is not None:
+                    msg = {
+                        "sender": record[2],
+                        "sender_name": user.get_username(),
+                        "content": record[1],
+                        "date": str(record[4])
+                    }
+                    messages.append(msg)
+
+            self.connection.commit()
+            return messages
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return []
         finally:
             if cursor and not cursor.closed:
                 cursor.close()

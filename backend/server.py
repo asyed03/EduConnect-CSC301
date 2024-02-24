@@ -37,6 +37,7 @@ def add_user_endpoints(server: Flask, request_manager: UserRequestManager):
     server.add_url_rule("/users/<id>", "users-get", methods=["GET"], view_func=request_manager.get_user)
     server.add_url_rule("/users/update", "users-update", methods=["POST"], view_func=request_manager.post_user_update)
     server.add_url_rule("/users/update/password", "users-update-password", methods=["POST"], view_func=request_manager.post_user_change_password)
+    server.add_url_rule("/chat/group/<id>", "get-group-chat", methods=["GET"], view_func=request_manager.get_group_chat)
 
 
 def add_announcement_endpoints(server: Flask, request_manager: AnnouncementRequestManager):

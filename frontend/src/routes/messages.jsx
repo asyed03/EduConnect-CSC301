@@ -52,6 +52,9 @@ const Messages = () => {
     try {
       // Send join room
       // Get all the messages back
+      const messagesResponse = await fetch(`http://127.0.0.1:8001/chat/group/${room.id}`);
+      const messagesData = await messagesResponse.json();
+      setMessages(messagesData);
     } catch (error) {
       console.error("Could not join room:", error);
     }

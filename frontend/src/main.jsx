@@ -14,7 +14,6 @@ import PostAnnouncement from './routes/postannouncement.jsx';
 import PostEvent from "./routes/postevent.jsx";
 import ProfileSettings from "./routes/profilesettings.jsx";
 import Messages from "./routes/messages.jsx";
-import Chatroom from "./routes/chatroom.jsx";
 
 const router = createBrowserRouter([
   {
@@ -65,11 +64,6 @@ const router = createBrowserRouter([
   {
     path: '/messages',
     element: <Messages />,
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: '/chatroom',
-    element: <Chatroom />,
     errorElement: <ErrorPage />,
   }
 ]);

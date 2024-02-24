@@ -80,6 +80,15 @@ class UserRequestManager(RequestManager):
 
         return self._respond(status_code=200, body=res)
 
+    def get_group_chat(self, id):
+        """
+        Handle a GET request for a group's chat.
+        :param id: The ID of the chat
+        :return: A list of messages sent in the group chat
+        """
+        messages = DatabaseManager.instance().get_group_messages(id)
+        return self._respond(status_code=200, body=messages)
+
     def post_user_change_password(self):
         """
         Handle a POST request for user updates.
