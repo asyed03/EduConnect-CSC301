@@ -3,7 +3,8 @@ import psycopg2 as pg
 from event import Event
 from group import Group
 from announcement import Announcement
-
+from announcement_comment import AnnouncementComment
+from datetime import datetime
 
 class DatabaseManager(object):
     """
@@ -25,7 +26,7 @@ class DatabaseManager(object):
 
     def _initialize(self):
         try:
-            self.connection = pg.connect("user=postgres password=admin")
+            self.connection = pg.connect("user=postgres password=qwerty")
             self._setup_database()
             return True
         except pg.Error as ex:
@@ -527,6 +528,66 @@ class DatabaseManager(object):
             self.connection.commit()
 
             return ids
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return []
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
+    def post_comment(self, announcement_id: int, commenter_id: int, comment_text: str) -> AnnouncementComment | None:
+        """
+        Post a new comment under a certain announcement.
+        :param announcement_id: The ID of the announcement
+        :param commenter_id: The ID of the user posting the comment
+        :param comment_text: The text of the comment
+        :return: The object for the comment if the posting was successful, None otherwise
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("INSERT INTO announcement_comment(announcement_id, commenter_id, comment_text, comment_date) "
+                               "VALUES (%s, %s, %s, %s) RETURNING id, comment_date;",
+                               [announcement_id, commenter_id, comment_text, datetime.now()])
+    
+            res = cursor.fetchone()
+            new_id = res[0]
+            new_date = res[1]
+    
+            if new_id <= 0:
+                return None
+    
+            self.connection.commit()
+    
+            new_comment = AnnouncementComment(new_id, announcement_id, commenter_id, comment_text, str(new_date))
+            return new_comment
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return None
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+    
+    def get_comments(self, announcement_id: int) -> list[AnnouncementComment]:
+        """
+        Get all comments under a certain announcement.
+        :param announcement_id: The ID of the announcement
+        :return: A list of all comments under the announcement
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT * FROM announcement_comment WHERE announcement_id = %s", [announcement_id])
+
+            comments = []
+            for record in cursor:
+                comment = AnnouncementComment(record[0], record[1], record[2], record[3], record[4])
+                comments.append(comment)
+
+            self.connection.commit()
+            return comments
         except pg.Error as ex:
             self.connection.rollback()
             print(ex)
