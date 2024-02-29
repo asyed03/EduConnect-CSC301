@@ -115,7 +115,7 @@ class DatabaseManager(object):
             if cursor and not cursor.closed:
                 cursor.close()
 
-    def update_user(self, user_id: int, email: str = None, password: str = None) -> bool:
+    def update_user(self, user_id: int, username: str = None, email: str = None, password: str = None) -> bool:
         """
         Update a user.
         :param user_id:
@@ -128,12 +128,19 @@ class DatabaseManager(object):
             cursor = self.connection.cursor()
             query = "UPDATE edu_user SET "
             v = []
+
+            if username is not None:
+                query += "username = %s"
+                v.append(username)
+
             if email is not None:
+                if username is not None:
+                    query += ", "
                 query += "email = %s"
                 v.append(email)
 
             if password is not None:
-                if email is not None:
+                if email is not None or username is not None:
                     query += ", "
                 query += "password = %s"
                 v.append(password)

@@ -4,6 +4,9 @@ import Menu from "../components/menu";
 
 function ProfileSettings() {
     const [email, setEmail] = useState("");
+    const [currentUsername, setCurrentUsername] = useState("");
+    const [newUsername, setNewUsername] = useState("");
+    const [newUsernameConfirm, setNewUsernameConfirm] = useState("");
     const [currentPass, setCurrentPass] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [newPasswordConfirm, setNewPasswordConfirm] = useState("");
@@ -50,7 +53,7 @@ function ProfileSettings() {
             "newEmail": email
         };
 
-        const response = await fetch("http://127.0.0.1:8001/users/update", {
+        const response = await fetch("http://127.0.0.1:8001/users/update/email", {
             method: "POST",
             body: JSON.stringify(body),
             headers: {
@@ -103,6 +106,36 @@ function ProfileSettings() {
 
         console.log("POST: ", res)
     }
+    async function changeUsername() {
+        const body = {
+            "userid": sessionStorage.getItem("userid"),
+            "currentUsername": currentUsername,
+            "newUsername": newUsername,
+            "newUsernameConfirm": newUsernameConfirm
+        };
+
+        const response = await fetch("http://127.0.0.1:8001/users/update/username", {
+            method: "POST",
+            body: JSON.stringify(body),
+            headers: {
+                "Content-type": "application/json"
+            }
+        });
+
+        const res = response.status;
+        const json = await response.json();
+
+        if (res != 200) {
+            setErrorMessage(json.message);
+            setSuccessMessage("");
+        }
+        else {
+            setErrorMessage("");
+            setSuccessMessage(json.message);
+        }
+
+        console.log("POST: ", res)
+    }
 
     return (
         <>
@@ -121,20 +154,36 @@ function ProfileSettings() {
                     <p className="success-message">{successMessage}</p>
                     <div className="settings-module personal" id="personal">
                         <h3>Personal Information</h3>
-                        <input type="text" name="email" id="email" placeholder={email} onChange={(e) => setEmail(e.target.value)} />
+                        <input type="text" name="email" id="email" placeholder={email}
+                               onChange={(e) => setEmail(e.target.value)}/>
                         <button onClick={savePersonal}>SAVE</button>
                     </div>
 
                     <div className="settings-module password" id="password">
                         <h3>Password</h3>
                         <div className="pass-input">
-                            <input type="password" name="currentPass" placeholder="Your current password" onChange={(e) => setCurrentPass(e.target.value)} />
-                            <input type="password" name="newPass" placeholder="Your new password" onChange={(e) => setNewPassword(e.target.value)} />
-                            <input type="password" name="newPassConfirm" placeholder="Retype new password" onChange={(e) => setNewPasswordConfirm(e.target.value)} />
+                            <input type="password" name="currentPass" placeholder="Your current password"
+                                   onChange={(e) => setCurrentPass(e.target.value)}/>
+                            <input type="password" name="newPass" placeholder="Your new password"
+                                   onChange={(e) => setNewPassword(e.target.value)}/>
+                            <input type="password" name="newPassConfirm" placeholder="Retype new password"
+                                   onChange={(e) => setNewPasswordConfirm(e.target.value)}/>
                         </div>
                         <button onClick={changePassword}>CHANGE PASSWORD</button>
                     </div>
 
+                    <div className="settings-module username" id="username">
+                        <h3>Username</h3>
+                        <div className="username-input">
+                            <input type="username" name="currentUsername" placeholder="Your current username"
+                                   onChange={(e) => setCurrentUsername(e.target.value)}/>
+                            <input type="username" name="newUsername" placeholder="Your new username"
+                                   onChange={(e) => setNewUsername(e.target.value)}/>
+                            <input type="username" name="newUsernameConfirm" placeholder="Retype new username"
+                                   onChange={(e) => setNewUsernameConfirm(e.target.value)}/>
+                        </div>
+                        <button onClick={changeUsername}>CHANGE USERNAME</button>
+                    </div>
                     <div className="settings-module attending-events" id="events">
                         <h3>Upcoming Events</h3>
                         <div className="event-list">
@@ -143,7 +192,7 @@ function ProfileSettings() {
                                     <h4>{event.group}: {event.title}</h4>
                                     <p>{event.description}</p>
                                     <i>Created by: {event.owner}</i>
-                                    <br />
+                                    <br/>
                                     <i>Date: {event.date}</i>
                                 </div>
                             ))}

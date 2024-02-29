@@ -126,7 +126,7 @@ class UserRequestManager(RequestManager):
             }
             return self._respond(status_code=401, body=body)
 
-    def post_user_update(self):
+    def post_user_change_email(self):
         """
         Handle a POST request for user updates.
         :return: If the operation was successful
@@ -144,6 +144,52 @@ class UserRequestManager(RequestManager):
             return self._respond(status_code=404, body=body)
 
         res = DatabaseManager.instance().update_user(user_id, email=new_email)
+
+        if res:
+            body = {
+                "message": "Updated successfully."
+            }
+            return self._respond(status_code=200, body=body)
+        else:
+            body = {
+                "message": "Could not update information."
+            }
+            return self._respond(status_code=401, body=body)
+
+    def post_user_change_username(self):
+        """
+        Handle a POST request for user updates.
+        :return: If the operation was successful
+        """
+        data = request.get_json()
+        user_id = data["userid"]
+        current_username = data["currentUsername"]
+        new_username = data["newUsername"]
+        new_confirm = data["newUsernameConfirm"]
+
+        if new_username != new_confirm:
+            body = {
+                "message": "New username does not match the confirmation."
+            }
+
+            return self._respond(status_code=401, body=body)
+
+        user = DatabaseManager.instance().get_user(user_id)
+        if not user:
+            body = {
+                "message": "Could not find the specified user."
+            }
+
+            return self._respond(status_code=404, body=body)
+
+        if current_username != user.get_username():
+            body = {
+                "message": "Incorrect current username."
+            }
+
+            return self._respond(status_code=401, body=body)
+
+        res = DatabaseManager.instance().update_user(user_id, username=new_username)
 
         if res:
             body = {
