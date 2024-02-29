@@ -21,6 +21,7 @@ class AnnouncementRequestManager(RequestManager):
                 continue
 
             a = {
+                "id": announcement.get_id(),
                 "poster": poster.get_email(),
                 "message": announcement.get_message(),
                 "date": str(announcement.get_date())

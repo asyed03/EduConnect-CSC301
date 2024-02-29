@@ -6,6 +6,7 @@ from requestmanagers.userrequestmanager import UserRequestManager
 from requestmanagers.grouprequestmanager import GroupRequestManager
 from requestmanagers.eventrequestmanager import EventRequestManager
 from requestmanagers.announcementrequestmanager import AnnouncementRequestManager
+from requestmanagers.announcementcommentrequestmanager import AnnouncementCommentRequestManager
 
 PORT = 8001
 
@@ -38,9 +39,13 @@ def add_user_endpoints(server: Flask, request_manager: UserRequestManager):
     server.add_url_rule("/users/update/password", "users-update-password", methods=["POST"], view_func=request_manager.post_user_change_password)
 
 
-def add_announcement_endpoints(server: Flask, request_manager: AnnouncementRequestManager):
+def add_announcement_endpoints(server: Flask, request_manager: AnnouncementRequestManager, comment_request_manager: AnnouncementCommentRequestManager):
     server.add_url_rule("/announcements/<id>", "announcements-get", methods=["GET"], view_func=request_manager.get_course_announcements)
     server.add_url_rule("/announcements/create", "announcements-create", methods=["POST"], view_func=request_manager.post_announcement)
+
+    server.add_url_rule("/announcements/comments/<id>", "announcement-comments-get", methods=["GET"], view_func=comment_request_manager.get_announcement_comments)
+    server.add_url_rule("/announcements/comments/create", "announcement-comments-create", methods=["POST"], view_func=comment_request_manager.post_announcement_comment)
+    server.add_url_rule("/announcements/comments/delete", "announcement-comments-delete", methods=["DELETE"], view_func=comment_request_manager.delete_announcement_comment)
 
 
 if __name__ == "__main__":
@@ -56,7 +61,8 @@ if __name__ == "__main__":
     add_event_endpoints(server, event_request_manager)
 
     announcement_request_manager = AnnouncementRequestManager()
-    add_announcement_endpoints(server, announcement_request_manager)
+    announcement_comment_request_manager = AnnouncementCommentRequestManager()
+    add_announcement_endpoints(server, announcement_request_manager, announcement_comment_request_manager)
 
     DatabaseManager.instance()  # Initial call to .instance() will setup the database
     # server.run(debug=True, port=PORT)
