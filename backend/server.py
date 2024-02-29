@@ -34,9 +34,8 @@ def add_user_endpoints(server: Flask, request_manager: UserRequestManager):
     server.add_url_rule("/login", "login", methods=["POST"], view_func=request_manager.post_login)
     server.add_url_rule("/register", "register", methods=["POST"], view_func=request_manager.post_register)
     server.add_url_rule("/users/<id>", "users-get", methods=["GET"], view_func=request_manager.get_user)
-    server.add_url_rule("/users/update/email", "users-update-email", methods=["POST"], view_func=request_manager.post_user_change_email)
+    server.add_url_rule("/users/update", "users-update", methods=["POST"], view_func=request_manager.post_user_update)
     server.add_url_rule("/users/update/password", "users-update-password", methods=["POST"], view_func=request_manager.post_user_change_password)
-    server.add_url_rule("/users/update/username", "users-update-username", methods=["POST"], view_func=request_manager.post_user_change_username)
 
 
 def add_announcement_endpoints(server: Flask, request_manager: AnnouncementRequestManager):

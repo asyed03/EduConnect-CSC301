@@ -4,6 +4,7 @@ import { Link } from "react-router-dom"
 
 function Register() {
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -12,6 +13,7 @@ function Register() {
     event.preventDefault();
     const body = {
       "email": email,
+      "username": username,
       "password": password,
       "confirmPassword": confirmPassword
     };
@@ -48,6 +50,7 @@ function Register() {
 
           <form onSubmit={registerPost}>
             <input type="email" name="email" id="email" placeholder='Email Address' value={email} onChange={(e) => setEmail(e.target.value)} />
+            <input type="text" name="username" id="username" placeholder='Username' value={username} onChange={(e) => setUsername(e.target.value)} />
             <input type="password" name="password" id="password" placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)} />
             <input type="password" name="confirmPassword" placeholder='Confirm Password' value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
 

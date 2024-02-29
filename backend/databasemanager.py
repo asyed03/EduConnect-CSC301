@@ -115,40 +115,56 @@ class DatabaseManager(object):
             if cursor and not cursor.closed:
                 cursor.close()
 
-    def update_user(self, user_id: int, username: str = None, email: str = None, password: str = None) -> bool:
+    def update_user_email(self, user_id: int, email: str) -> bool:
         """
-        Update a user.
-        :param user_id:
-        :param email:
-        :param password:
-        :return: If the update was successful
+        Update a user's email.
+        :param user_id: The user's ID
+        :param email: The new email
         """
         cursor = None
         try:
             cursor = self.connection.cursor()
-            query = "UPDATE edu_user SET "
-            v = []
+            cursor.execute("UPDATE edu_user SET email = %s WHERE id = %s", [email, user_id])
+            self.connection.commit()
+            return True
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return False
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
 
-            if username is not None:
-                query += "username = %s"
-                v.append(username)
+    def update_user_username(self, user_id: int, username: str) -> bool:
+        """
+        Update a user's email.
+        :param user_id: The user's ID
+        :param username: The new username
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("UPDATE edu_user SET username = %s WHERE id = %s", [username, user_id])
+            self.connection.commit()
+            return True
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return False
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
 
-            if email is not None:
-                if username is not None:
-                    query += ", "
-                query += "email = %s"
-                v.append(email)
-
-            if password is not None:
-                if email is not None or username is not None:
-                    query += ", "
-                query += "password = %s"
-                v.append(password)
-
-            query += " WHERE id = %s"
-            v.append(user_id)
-            cursor.execute(query, v)
-
+    def update_user_password(self, user_id: int, password: str) -> bool:
+        """
+        Update a user's email.
+        :param user_id: The user's ID
+        :param password: The new password
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("UPDATE edu_user SET password = %s WHERE id = %s", [password, user_id])
             self.connection.commit()
             return True
         except pg.Error as ex:
