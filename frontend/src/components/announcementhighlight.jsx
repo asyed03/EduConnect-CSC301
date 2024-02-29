@@ -1,52 +1,59 @@
 import React, { useState, useEffect } from "react";
 import "../styles/AnnouncementHighlight.scss";
+import CommentHighlight from "./commenthighlight";
 
 function AnnouncementHighlight({ announcement }) {
   const [commentText, setCommentText] = useState("");
   const [comments, setComments] = useState([]);
 
-  useEffect(() => {
-    // Fetch comments for the current announcement when the component mounts
-    fetchComments();
-  }, [announcement.id]); // Adjust the dependency as needed
-
-  const fetchComments = async () => {
+  async function fetchComments() {
     try {
       const response = await fetch(`http://127.0.0.1:8001/announcements/comments/${announcement.id}`);
       const data = await response.json();
-      setComments(data.comments);
+      setComments(data);
+      console.log(data);
     } catch (error) {
       console.error("Error fetching comments:", error);
     }
-  };
+  }
 
-  const handleCommentSubmit = async () => {
-    if (commentText.trim() !== "") {
-      try {
-        // Send a POST request to add a new comment
-        const response = await fetch(`http://127.0.0.1:8001/announcements/comments/create`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            announcement_Id: announcement.id,
-            content: commentText,
-          }),
-        });
+  useEffect(() => {
+    // Fetch comments for the current announcement when the component mounts
+    fetchComments();
+  }, []);
 
-        if (response.ok) {
-          // If the comment is added successfully, fetch updated comments
-          fetchComments();
-          setCommentText("");
-        } else {
-          console.error("Failed to add comment:", response.status, response.statusText);
-        }
-      } catch (error) {
-        console.error("Error posting comment:", error);
-      }
+  async function handleCommentSubmit(e) {
+    e.preventDefault();
+
+    if (commentText.trim() === "") {
+      return;
     }
-  };
+
+    try {
+      // Send a POST request to add a new comment
+      const response = await fetch(`http://127.0.0.1:8001/announcements/comments/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          "announcement_id": announcement.id,
+          "content": commentText,
+          "commenter_id": sessionStorage.getItem("userid")
+        }),
+      });
+
+      if (response.ok) {
+        // If the comment is added successfully, fetch updated comments
+        fetchComments();
+        setCommentText("");
+      } else {
+        console.error("Failed to add comment:", response.status, response.statusText);
+      }
+    } catch (error) {
+      console.error("Error posting comment:", error);
+    }
+  }
 
   return (
     <div className="announcement">
@@ -55,21 +62,20 @@ function AnnouncementHighlight({ announcement }) {
       <p>{announcement.message}</p>
 
       <div className="comments-section">
-        <h6>Comments:</h6>
+        <h4>Comments:</h4>
         {comments.map((comment, index) => (
-          <p key={index} className="comment">
-            {comment.content}
-          </p>
+          <CommentHighlight comment={comment} key={index} />
         ))}
         <div className="comment-input-section">
-          <input
-            type="text"
-            placeholder="Type your comment..."
-            value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
-            style={{ width: "calc(100% - 20px)", padding: "10px" }} // Adjust the padding value as needed
-          />
-          <button onClick={handleCommentSubmit}>&rarr; Reply</button>
+          <form onSubmit={handleCommentSubmit}>
+            <input
+              type="text"
+              placeholder="Type your comment..."
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+            />
+            <button type="submit">&rarr; Reply</button>
+          </form>
         </div>
       </div>
     </div>

@@ -7,11 +7,6 @@
   transition: 0.2s;
   width: 90%;
 
-  &:hover {
-    width: 100%;
-    transition: 0.2s;
-  }
-
   h5 {
     font-weight: 500;
     font-size: 22px;
@@ -22,5 +17,46 @@
     margin: 0;
     opacity: 0.8;
     font-weight: 300;
+  }
+
+  .comment {
+    background-color: rgba(0, 128, 0, 0.082);
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    outline: 1px solid rgba(0, 0, 0, 0.185);
+    margin-top: 1rem;
+    margin-left: 1.5rem;
+
+    h5 {
+      font-size: 13px;
+    }
+
+    p {
+      font-size: 16px;
+    }
+  }
+}
+
+.comment-input-section {
+  form {
+    padding: 1rem;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+
+    input {
+      flex-grow: 1;
+    }
+
+    button {
+      margin-left: 10px;
+      padding: 10px;
+      background-color: #4caf50; /* Green color for the send button */
+      color: #fff; /* White text color */
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
   }
 }

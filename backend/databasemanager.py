@@ -3,8 +3,9 @@ import psycopg2 as pg
 from event import Event
 from group import Group
 from announcement import Announcement
-from announcement_comment import AnnouncementComment
+from comment import AnnouncementComment
 from datetime import datetime
+
 
 class DatabaseManager(object):
     """
@@ -26,7 +27,7 @@ class DatabaseManager(object):
 
     def _initialize(self):
         try:
-            self.connection = pg.connect("user=postgres password=qwerty")
+            self.connection = pg.connect("user=postgres password=admin")
             self._setup_database()
             return True
         except pg.Error as ex:
@@ -547,9 +548,9 @@ class DatabaseManager(object):
         cursor = None
         try:
             cursor = self.connection.cursor()
-            cursor.execute("INSERT INTO announcement_comment(announcement_id, commenter_id, comment_text, comment_date) "
-                               "VALUES (%s, %s, %s, %s) RETURNING id, comment_date;",
-                               [announcement_id, commenter_id, comment_text, datetime.now()])
+            cursor.execute("INSERT INTO announcement_comments(announcement_id, commenter_id, content) "
+                           "VALUES (%s, %s, %s) RETURNING id, date",
+                           [announcement_id, commenter_id, comment_text])
     
             res = cursor.fetchone()
             new_id = res[0]
@@ -579,7 +580,7 @@ class DatabaseManager(object):
         cursor = None
         try:
             cursor = self.connection.cursor()
-            cursor.execute("SELECT * FROM announcement_comment WHERE announcement_id = %s", [announcement_id])
+            cursor.execute("SELECT * FROM announcement_comments WHERE announcement_id = %s", [announcement_id])
 
             comments = []
             for record in cursor:

@@ -2,16 +2,17 @@ from flask import request
 from requestmanagers.requestmanager import RequestManager
 from databasemanager import DatabaseManager
 
+
 class AnnouncementCommentRequestManager(RequestManager):
     def __init__(self):
         RequestManager.__init__(self)
 
-    def get_announcement_comments(self, announcement_id):
+    def get_announcement_comments(self, id):
         """
         Handle a GET request for comments on a given announcement.
         :return: A list of comments for the given announcement
         """
-        comments = DatabaseManager.instance().get_comments(announcement_id)
+        comments = DatabaseManager.instance().get_comments(id)
         res = []
 
         for comment in comments:
@@ -20,9 +21,9 @@ class AnnouncementCommentRequestManager(RequestManager):
                 continue
 
             c = {
-                "commenter": commenter.get_email(),
-                "comment_text": comment.get_comment_text(),
-                "comment_date": str(comment.get_comment_date())
+                "commenter": commenter.get_username(),
+                "content": comment.get_comment_text(),
+                "date": str(comment.get_comment_date())
             }
             res.append(c)
 
@@ -42,7 +43,7 @@ class AnnouncementCommentRequestManager(RequestManager):
 
             return self._respond(status_code=401, body=body)
 
-        comment = DatabaseManager.instance().post_comment(data["announcement_Id"], data["commenter_id"], data["content"])
+        comment = DatabaseManager.instance().post_comment(data["announcement_id"], data["commenter_id"], data["content"])
         if comment is None:
             body = {
                 "message": "There was an error while creating the comment."

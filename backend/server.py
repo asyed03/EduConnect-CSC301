@@ -10,6 +10,7 @@ from requestmanagers.announcementcommentrequestmanager import AnnouncementCommen
 
 PORT = 8001
 
+
 def create_server():
     app = Flask(__name__)
     CORS(app)
@@ -45,6 +46,7 @@ def add_announcement_endpoints(server: Flask, request_manager: AnnouncementReque
     server.add_url_rule("/announcements/comments/<id>", "announcement-comments-get", methods=["GET"], view_func=comment_request_manager.get_announcement_comments)
     server.add_url_rule("/announcements/comments/create", "announcement-comments-create", methods=["POST"], view_func=comment_request_manager.post_announcement_comment)
     server.add_url_rule("/announcements/comments/delete", "announcement-comments-delete", methods=["DELETE"], view_func=comment_request_manager.delete_announcement_comment)
+
 
 if __name__ == "__main__":
     server = create_server()
