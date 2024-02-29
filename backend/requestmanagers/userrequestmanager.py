@@ -40,6 +40,12 @@ class UserRequestManager(RequestManager):
             }
             return self._respond(status_code=401, body=body)
 
+        if data["username"] == "":
+            body = {
+                "message": "Invalid username. Please try again."
+            }
+            return self._respond(status_code=401, body=body)
+
         if data["password"] == "":
             body = {
                 "message": "Invalid password. Please try again."
@@ -52,7 +58,7 @@ class UserRequestManager(RequestManager):
             }
             return self._respond(status_code=401, body=body)
 
-        new_user = DatabaseManager.instance().register_user(data["email"], data["email"], data["password"])
+        new_user = DatabaseManager.instance().register_user(data["email"], data["username"], data["password"])
 
         if new_user is not None:
             return self._respond(status_code=200)
@@ -134,6 +140,7 @@ class UserRequestManager(RequestManager):
         data = request.get_json()
         user_id = data["userid"]
         new_email = data["newEmail"]
+        new_username = data["newUsername"]
 
         user = DatabaseManager.instance().get_user(user_id)
         if not user:
@@ -143,7 +150,64 @@ class UserRequestManager(RequestManager):
 
             return self._respond(status_code=404, body=body)
 
-        res = DatabaseManager.instance().update_user(user_id, email=new_email)
+        res = None
+        if len(new_email) > 0:
+            res = DatabaseManager.instance().update_user_email(user_id, new_email)
+
+        if len(new_username) > 0:
+            res = DatabaseManager.instance().update_user_username(user_id, new_username)
+
+        if res is None:
+            body = {
+                "message": ""
+            }
+            return self._respond(status_code=200, body=body)
+
+        if res:
+            body = {
+                "message": "Updated successfully."
+            }
+            return self._respond(status_code=200, body=body)
+        else:
+            body = {
+                "message": "Could not update information."
+            }
+            return self._respond(status_code=401, body=body)
+
+    def post_user_change_username(self):
+        """
+        Handle a POST request for user updates.
+        :return: If the operation was successful
+        """
+        data = request.get_json()
+        user_id = data["userid"]
+        current_username = data["currentUsername"]
+        new_username = data["newUsername"]
+        new_confirm = data["newUsernameConfirm"]
+
+        if new_username != new_confirm:
+            body = {
+                "message": "New username does not match the confirmation."
+            }
+
+            return self._respond(status_code=401, body=body)
+
+        user = DatabaseManager.instance().get_user(user_id)
+        if not user:
+            body = {
+                "message": "Could not find the specified user."
+            }
+
+            return self._respond(status_code=404, body=body)
+
+        if current_username != user.get_username():
+            body = {
+                "message": "Incorrect current username."
+            }
+
+            return self._respond(status_code=401, body=body)
+
+        res = DatabaseManager.instance().update_user(user_id, username=new_username)
 
         if res:
             body = {
