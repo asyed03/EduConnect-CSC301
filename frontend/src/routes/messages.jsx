@@ -1,15 +1,15 @@
 import '../styles/Messages.scss';
 import Menu from '../components/menu';
-import { io } from "socket.io-client";
+import { socket } from "../socket.js";
 import React, { useState, useEffect } from 'react';
 
 const Messages = () => {
+  const [isConnected, setIsConnected] = useState(socket.connected);
+
   const [rooms, setRooms] = useState([]);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [selectedRoom, setSelectedRoom] = useState(null);
-
-  const socket = io.connect("http://127.0.0.1:8002", { transports: ["websocket"], debug: true });
 
   async function fetchRooms() {
     try {
@@ -23,38 +23,77 @@ const Messages = () => {
     }
   }
 
-  function handleMessage(msg) {
-    const res = JSON.parse(msg);
-    var temp = messages;
-    temp.unshift(res); // Add to start
-    console.log("Received: ", res);
-    setMessages(temp);
-    console.log(messages);
-    setNewMessage(""); // Clear the new message
-  }
+  useEffect(() => {
+    // no-op if the socket is already connected
+    if (!socket.connected) {
+      socket.connect();
+    }
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
+    function onConnect() {
+      console.log("Socket connected");
+      setIsConnected(true);
+    }
+
+    function onDisconnect() {
+      console.log("Socket disconnected");
+      setIsConnected(false);
+    }
+
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
+    socket.on("messageres", onMessage);
+
     async function fetchRoomData() {
       await fetchRooms();
     }
 
     fetchRoomData();
 
-    socket.on("messageres", handleMessage);
+    function onMessage(value) {
+      const res = JSON.parse(value);
+      console.log("Received: ", res);
+      setMessages(previous => [res, ...previous]);
+      setNewMessage(""); // Clear the new message
+    }
+
     return () => {
-      socket.off("messageres", handleMessage);
+      socket.off("connect", onConnect);
+      socket.off("disconnect", onDisconnect);
+      socket.off("messageres", onMessage);
     };
   }, []);
 
   async function selectRoom(room) {
+    // Send leave room
+    if (selectedRoom) {
+      const bodyLeave = {
+        "userid": sessionStorage.getItem("userid"),
+        "room": String(selectedRoom.id)
+      };
+      socket.emit("leave", JSON.stringify(bodyLeave));
+    }
+
     setSelectedRoom(room);
 
     try {
       // Send join room
       // Get all the messages back
+      const bodyJoin = {
+        "userid": sessionStorage.getItem("userid"),
+        "room": String(room.id)
+      };
+      socket.emit("join", JSON.stringify(bodyJoin));
+
       const messagesResponse = await fetch(`http://127.0.0.1:8001/chat/group/${room.id}`);
       const messagesData = await messagesResponse.json();
       setMessages(messagesData);
+      console.log(messages);
     } catch (error) {
       console.error("Could not join room:", error);
     }
@@ -71,7 +110,7 @@ const Messages = () => {
 
     const body = {
       "sender": sessionStorage.getItem("userid"),
-      "group": 1,
+      "group": String(selectedRoom.id),
       "content": newMessage
     };
 
@@ -114,7 +153,7 @@ const Messages = () => {
                     {message.content}
                   </li>
                 ))}
-              </ul> 
+              </ul>
               <div className="message-input">
                 <input
                   type="text"

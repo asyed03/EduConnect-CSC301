@@ -41,7 +41,7 @@ class DatabaseManager(object):
             self.connection.commit()
 
     def _setup_database(self):
-        self._clear_database()
+        # self._clear_database()
         cursor, schema_file = None, None
 
         try:

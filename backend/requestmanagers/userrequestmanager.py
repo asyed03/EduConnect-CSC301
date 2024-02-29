@@ -87,6 +87,7 @@ class UserRequestManager(RequestManager):
         :return: A list of messages sent in the group chat
         """
         messages = DatabaseManager.instance().get_group_messages(id)
+        messages.reverse()
         return self._respond(status_code=200, body=messages)
 
     def post_user_change_password(self):
