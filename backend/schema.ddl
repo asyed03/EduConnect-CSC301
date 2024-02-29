@@ -67,3 +67,13 @@ CREATE TABLE IF NOT EXISTS personal_chat (
     creation_date timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY(id)
 );
+
+
+CREATE TABLE IF NOT EXISTS announcement_comments (
+    id serial NOT NULL,
+    announcement_id integer NOT NULL REFERENCES announcement(id),
+    commenter_id integer NOT NULL REFERENCES edu_user(id),
+    content text NOT NULL,
+    date timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY(id)
+);

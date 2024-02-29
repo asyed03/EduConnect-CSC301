@@ -65,8 +65,8 @@ const CourseView = () => {
                 <Link to={`/postannouncement/${courseData.id}`}>
                   <button className="create-btn">New</button>
                 </Link>
-                {announcements.map((announcement) => (
-                  <AnnouncementHighlight announcement={announcement} key={announcement.message} />
+                {announcements.map((announcement, index) => (
+                  <AnnouncementHighlight announcement={announcement} key={index} />
                 ))}
               </>
             )

@@ -3,6 +3,7 @@ import psycopg2 as pg
 from event import Event
 from group import Group
 from announcement import Announcement
+from comment import AnnouncementComment
 
 
 class DatabaseManager(object):
@@ -115,33 +116,56 @@ class DatabaseManager(object):
             if cursor and not cursor.closed:
                 cursor.close()
 
-    def update_user(self, user_id: int, email: str = None, password: str = None) -> bool:
+    def update_user_email(self, user_id: int, email: str) -> bool:
         """
-        Update a user.
-        :param user_id:
-        :param email:
-        :param password:
-        :return: If the update was successful
+        Update a user's email.
+        :param user_id: The user's ID
+        :param email: The new email
         """
         cursor = None
         try:
             cursor = self.connection.cursor()
-            query = "UPDATE edu_user SET "
-            v = []
-            if email is not None:
-                query += "email = %s"
-                v.append(email)
+            cursor.execute("UPDATE edu_user SET email = %s WHERE id = %s", [email, user_id])
+            self.connection.commit()
+            return True
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return False
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
 
-            if password is not None:
-                if email is not None:
-                    query += ", "
-                query += "password = %s"
-                v.append(password)
+    def update_user_username(self, user_id: int, username: str) -> bool:
+        """
+        Update a user's email.
+        :param user_id: The user's ID
+        :param username: The new username
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("UPDATE edu_user SET username = %s WHERE id = %s", [username, user_id])
+            self.connection.commit()
+            return True
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return False
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
 
-            query += " WHERE id = %s"
-            v.append(user_id)
-            cursor.execute(query, v)
-
+    def update_user_password(self, user_id: int, password: str) -> bool:
+        """
+        Update a user's email.
+        :param user_id: The user's ID
+        :param password: The new password
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("UPDATE edu_user SET password = %s WHERE id = %s", [password, user_id])
             self.connection.commit()
             return True
         except pg.Error as ex:
@@ -627,6 +651,66 @@ class DatabaseManager(object):
             self.connection.rollback()
             print(ex)
             return -1
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
+    def post_comment(self, announcement_id: int, commenter_id: int, comment_text: str) -> AnnouncementComment | None:
+        """
+        Post a new comment under a certain announcement.
+        :param announcement_id: The ID of the announcement
+        :param commenter_id: The ID of the user posting the comment
+        :param comment_text: The text of the comment
+        :return: The object for the comment if the posting was successful, None otherwise
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("INSERT INTO announcement_comments(announcement_id, commenter_id, content) "
+                           "VALUES (%s, %s, %s) RETURNING id, date",
+                           [announcement_id, commenter_id, comment_text])
+    
+            res = cursor.fetchone()
+            new_id = res[0]
+            new_date = res[1]
+    
+            if new_id <= 0:
+                return None
+    
+            self.connection.commit()
+    
+            new_comment = AnnouncementComment(new_id, announcement_id, commenter_id, comment_text, str(new_date))
+            return new_comment
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return None
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+    
+    def get_comments(self, announcement_id: int) -> list[AnnouncementComment]:
+        """
+        Get all comments under a certain announcement.
+        :param announcement_id: The ID of the announcement
+        :return: A list of all comments under the announcement
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT * FROM announcement_comments WHERE announcement_id = %s", [announcement_id])
+
+            comments = []
+            for record in cursor:
+                comment = AnnouncementComment(record[0], record[1], record[2], record[3], record[4])
+                comments.append(comment)
+
+            self.connection.commit()
+            return comments
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return []
         finally:
             if cursor and not cursor.closed:
                 cursor.close()
