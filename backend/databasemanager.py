@@ -4,7 +4,6 @@ from event import Event
 from group import Group
 from announcement import Announcement
 from comment import AnnouncementComment
-from datetime import datetime
 
 
 class DatabaseManager(object):
