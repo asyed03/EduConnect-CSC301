@@ -101,7 +101,8 @@ const Messages = () => {
 
   // ...
 
-  function sendMessage() {
+  function sendMessage(e) {
+    e.preventDefault();
     if (newMessage.length <= 0) {
       return;
     }
@@ -154,15 +155,15 @@ const Messages = () => {
                   </li>
                 ))}
               </ul>
-              <div className="message-input">
+              <form onSubmit={sendMessage} className="message-input">
                 <input
                   type="text"
                   placeholder="Type your message..."
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                 />
-                <button onClick={sendMessage}>Send</button>
-              </div>
+                <button type="submit">Send</button>
+              </form>
             </>
           )}
         </div>
