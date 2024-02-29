@@ -50,6 +50,25 @@ CREATE TABLE IF NOT EXISTS event_attend (
     PRIMARY KEY(event_id, member_id)
 );
 
+CREATE TABLE IF NOT EXISTS group_chat (
+    id serial NOT NULL,
+    content text NOT NULL,
+    sender_id integer NOT NULL REFERENCES edu_user(id),
+    group_id integer NOT NULL REFERENCES edu_group(id),
+    creation_date timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY(id)
+);
+
+CREATE TABLE IF NOT EXISTS personal_chat (
+    id serial NOT NULL,
+    content text NOT NULL,
+    sender_id integer NOT NULL REFERENCES edu_user(id),
+    receiver_id integer NOT NULL REFERENCES edu_user(id),
+    creation_date timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY(id)
+);
+
+
 CREATE TABLE IF NOT EXISTS announcement_comments (
     id serial NOT NULL,
     announcement_id integer NOT NULL REFERENCES announcement(id),
