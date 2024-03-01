@@ -7,6 +7,29 @@
   transition: 0.2s;
   width: 90%;
 
+  .voting-buttons {
+    button {
+      background:none;
+      border: none;
+      cursor: pointer;
+      transition: 0.2s;
+      margin-right: 1rem;
+      padding: 5px;
+      border-radius: 5px;
+
+      &:hover {
+        transform: scale(1.1);
+        transition: 0.2s;
+        outline: 1px solid rgba(0, 0, 0, 0.048);
+        border-radius: 10px;
+      }
+
+      &:active {
+        outline: 1px solid green;
+      }
+    }
+  }
+
   h5 {
     font-weight: 500;
     font-size: 22px;

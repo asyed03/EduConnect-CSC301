@@ -26,7 +26,7 @@ class DatabaseManager(object):
 
     def _initialize(self):
         try:
-            self.connection = pg.connect("user=postgres password=qwerty")
+            self.connection = pg.connect("user=postgres password=admin")
             self._setup_database()
             return True
         except pg.Error as ex:
@@ -252,7 +252,9 @@ class DatabaseManager(object):
 
             announcements = []
             for record in cursor:
-                ann = Announcement(record[0], record[1], record[2], record[4], record[3], record[5], record[6])
+                upvotes = self.get_announcement_upvotes(record[0])
+                downvotes = self.get_announcement_downvotes(record[0])
+                ann = Announcement(record[0], record[1], record[2], record[4], record[3], upvotes, downvotes)
                 announcements.append(ann)
 
             self.connection.commit()
@@ -279,13 +281,57 @@ class DatabaseManager(object):
                 return None
 
             r = cursor.fetchone()
-            announcement = Announcement(identifier, r[1], r[2], r[4], r[3], r[5], r[6])
+            upvotes = self.get_announcement_upvotes(identifier)
+            downvotes = self.get_announcement_downvotes(identifier)
+            announcement = Announcement(identifier, r[1], r[2], r[4], r[3], upvotes, downvotes)
             self.connection.commit()
             return announcement
         except pg.Error as ex:
             self.connection.rollback()
             print(ex)
             return None
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
+    def get_announcement_upvotes(self, identifier: int) -> int:
+        """
+        Get an announcement upvote count with the given identifier.
+        :param identifier: The identifier of the announcement
+        :return: The number of votes
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT count(*) FROM announcement_upvotes WHERE announcement = %s", [identifier])
+            r = cursor.fetchone()
+            self.connection.commit()
+            return r[0]
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return 0
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
+    def get_announcement_downvotes(self, identifier: int) -> int:
+        """
+        Get an announcement downvote count with the given identifier.
+        :param identifier: The identifier of the announcement
+        :return: The number of votes
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT count(*) FROM announcement_downvotes WHERE announcement = %s", [identifier])
+            r = cursor.fetchone()
+            self.connection.commit()
+            return r[0]
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return 0
         finally:
             if cursor and not cursor.closed:
                 cursor.close()
@@ -319,6 +365,72 @@ class DatabaseManager(object):
             self.connection.rollback()
             print(ex)
             return None
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
+    def upvote_announcement(self, announcement: int, user_id: int) -> bool:
+        """
+        Upvote an announcement.
+        :param announcement: The ID of the announcement
+        :param user_id: The ID of the user making the vote
+        :return: If the upvote was added
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT * FROM announcement_upvotes WHERE announcement = %s AND voter = %s",
+                           [announcement, user_id])
+
+            # Remove the upvote if it exists already
+            if cursor.rowcount > 0:
+                self.connection.commit()
+                cursor.execute("DELETE FROM announcement_upvotes WHERE announcement = %s AND voter = %s",
+                               [announcement, user_id])
+                self.connection.commit()
+                return False
+
+            cursor.execute("INSERT INTO announcement_upvotes(announcement, voter) VALUES (%s, %s)",
+                           [announcement, user_id])
+            self.connection.commit()
+            return True
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return False
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
+    def downvote_announcement(self, announcement: int, user_id: int) -> bool:
+        """
+        Downvote an announcement.
+        :param announcement: The ID of the announcement
+        :param user_id: The ID of the user making the vote
+        :return: If the downvote was added
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT * FROM announcement_downvotes WHERE announcement = %s AND voter = %s",
+                           [announcement, user_id])
+
+            # Remove the downvote if it exists already
+            if cursor.rowcount > 0:
+                self.connection.commit()
+                cursor.execute("DELETE FROM announcement_downvotes WHERE announcement = %s AND voter = %s",
+                               [announcement, user_id])
+                self.connection.commit()
+                return False
+
+            cursor.execute("INSERT INTO announcement_downvotes(announcement, voter) VALUES (%s, %s)",
+                           [announcement, user_id])
+            self.connection.commit()
+            return True
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return False
         finally:
             if cursor and not cursor.closed:
                 cursor.close()

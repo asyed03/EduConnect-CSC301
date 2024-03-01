@@ -8,37 +8,52 @@ function AnnouncementHighlight({ announcement }) {
   const [upvotes, setUpvotes] = useState(announcement.upvotes || 0);
   const [downvotes, setDownvotes] = useState(announcement.downvotes || 0);
 
-  // Function to handle upvotes
-  const handleUpvote = async () => {
-    // Placeholder: Implement API call to backend to increase upvote count
-    
+  async function handleUpvote() {
+    try {
+      const body = {
+        "user": sessionStorage.getItem("userid")
+      };
 
-      try {
-        const response = await fetch(`http://127.0.0.1:8001/announcements/upvote`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              "announcement_id": announcement.id,
-            }),
-        });
-
-        if (response.ok) {
-            // Do something?
-        } else {
-            console.error("Failed to upvote:", response.status, response.statusText);
+      const response = await fetch(`http://127.0.0.1:8001/announcements/upvote/${announcement.id}`, {
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: {
+          "Content-type": "application/json"
         }
-    } catch (error) {
-        console.error("Error upvoting:", error);
-    }
-  };
+      });
 
-  // Function to handle downvotes
-  const handleDownvote = async () => {
-    // Placeholder: Implement API call to backend to decrease upvote count
-    setDownvotes(downvotes + 1);
-  };
+      if (response.ok) {
+        const res = await response.json();
+        setUpvotes(res["upvotes"]);
+      }
+    } catch (error) {
+      console.error("Error posting an upvote request:", error);
+    }
+  }
+
+  async function handleDownvote() {
+    try {
+      const body = {
+        "user": sessionStorage.getItem("userid")
+      };
+
+      const response = await fetch(`http://127.0.0.1:8001/announcements/downvote/${announcement.id}`, {
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: {
+          "Content-type": "application/json"
+        }
+      });
+
+      if (response.ok) {
+        const res = await response.json();
+        console.log(res);
+        setDownvotes(res["downvotes"]);
+      }
+    } catch (error) {
+      console.error("Error posting an downvote request:", error);
+    }
+  }
 
   async function fetchComments() {
     try {
@@ -97,7 +112,7 @@ function AnnouncementHighlight({ announcement }) {
 
       {/* Voting section */}
       <div className="voting-buttons">
-        <button onClick={handleUpvote}>👍 {announcement.upvotes}</button>
+        <button onClick={handleUpvote}>👍 {upvotes}</button>
         <button onClick={handleDownvote}>👎 {downvotes}</button>
       </div>
 

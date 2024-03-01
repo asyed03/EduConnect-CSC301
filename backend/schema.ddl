@@ -24,8 +24,6 @@ CREATE TABLE IF NOT EXISTS announcement (
     group_id integer NOT NULL REFERENCES edu_group(id),
     message text NOT NULL,
     date timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    upvotes integer NOT NULL DEFAULT 0,
-    downvotes integer NOT NULL DEFAULT 0,
     PRIMARY KEY(id)
 );
 
@@ -78,4 +76,16 @@ CREATE TABLE IF NOT EXISTS announcement_comments (
     content text NOT NULL,
     date timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY(id)
+);
+
+CREATE TABLE IF NOT EXISTS announcement_upvotes (
+    announcement integer NOT NULL REFERENCES announcement(id),
+    voter integer NOT NULL REFERENCES edu_user(id),
+    PRIMARY KEY(announcement, voter)
+);
+
+CREATE TABLE IF NOT EXISTS announcement_downvotes (
+    announcement integer NOT NULL REFERENCES announcement(id),
+    voter integer NOT NULL REFERENCES edu_user(id),
+    PRIMARY KEY(announcement, voter)
 );
