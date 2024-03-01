@@ -5,6 +5,40 @@ import CommentHighlight from "./commenthighlight";
 function AnnouncementHighlight({ announcement }) {
   const [commentText, setCommentText] = useState("");
   const [comments, setComments] = useState([]);
+  const [upvotes, setUpvotes] = useState(announcement.upvotes || 0);
+  const [downvotes, setDownvotes] = useState(announcement.downvotes || 0);
+
+  // Function to handle upvotes
+  const handleUpvote = async () => {
+    // Placeholder: Implement API call to backend to increase upvote count
+    
+
+      try {
+        const response = await fetch(`http://127.0.0.1:8001/announcements/upvote`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              "announcement_id": announcement.id,
+            }),
+        });
+
+        if (response.ok) {
+            // Do something?
+        } else {
+            console.error("Failed to upvote:", response.status, response.statusText);
+        }
+    } catch (error) {
+        console.error("Error upvoting:", error);
+    }
+  };
+
+  // Function to handle downvotes
+  const handleDownvote = async () => {
+    // Placeholder: Implement API call to backend to decrease upvote count
+    setDownvotes(downvotes + 1);
+  };
 
   async function fetchComments() {
     try {
@@ -61,6 +95,13 @@ function AnnouncementHighlight({ announcement }) {
       <h6>{announcement.date.toString()}</h6>
       <p>{announcement.message}</p>
 
+      {/* Voting section */}
+      <div className="voting-buttons">
+        <button onClick={handleUpvote}>👍 {announcement.upvotes}</button>
+        <button onClick={handleDownvote}>👎 {downvotes}</button>
+      </div>
+
+      {/* Comment section */}
       <div className="comments-section">
         <h4>Comments:</h4>
         {comments.map((comment, index) => (

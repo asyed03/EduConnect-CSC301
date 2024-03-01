@@ -26,7 +26,7 @@ class DatabaseManager(object):
 
     def _initialize(self):
         try:
-            self.connection = pg.connect("user=postgres password=admin")
+            self.connection = pg.connect("user=postgres password=qwerty")
             self._setup_database()
             return True
         except pg.Error as ex:
@@ -252,7 +252,7 @@ class DatabaseManager(object):
 
             announcements = []
             for record in cursor:
-                ann = Announcement(record[0], record[1], record[2], record[4], record[3])
+                ann = Announcement(record[0], record[1], record[2], record[4], record[3], record[5], record[6])
                 announcements.append(ann)
 
             self.connection.commit()
@@ -279,7 +279,7 @@ class DatabaseManager(object):
                 return None
 
             r = cursor.fetchone()
-            announcement = Announcement(identifier, r[1], r[2], r[4], r[3])
+            announcement = Announcement(identifier, r[1], r[2], r[4], r[3], r[5], r[6])
             self.connection.commit()
             return announcement
         except pg.Error as ex:
@@ -313,7 +313,7 @@ class DatabaseManager(object):
 
             self.connection.commit()
 
-            new_announcement = Announcement(new_id, poster, group, str(new_date), message)
+            new_announcement = Announcement(new_id, poster, group, str(new_date), message, 0, 0)
             return new_announcement
         except pg.Error as ex:
             self.connection.rollback()

@@ -24,6 +24,8 @@ CREATE TABLE IF NOT EXISTS announcement (
     group_id integer NOT NULL REFERENCES edu_group(id),
     message text NOT NULL,
     date timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    upvotes integer NOT NULL DEFAULT 0,
+    downvotes integer NOT NULL DEFAULT 0,
     PRIMARY KEY(id)
 );
 

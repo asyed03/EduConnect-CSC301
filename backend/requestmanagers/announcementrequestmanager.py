@@ -24,7 +24,8 @@ class AnnouncementRequestManager(RequestManager):
                 "id": announcement.get_id(),
                 "poster": poster.get_email(),
                 "message": announcement.get_message(),
-                "date": str(announcement.get_date())
+                "date": str(announcement.get_date()),
+                "upvotes": announcement.get_upvotes()
             }
             res.append(a)
 
@@ -68,3 +69,23 @@ class AnnouncementRequestManager(RequestManager):
         }
 
         return self._respond(status_code=200, body=body)
+    
+    def post_upvote_announcement(self):
+        data = request.get_json()
+        announcement = DatabaseManager.instance().get_announcement(data["announcement_id"])
+
+        if announcement:
+            announcement.upvotes += 1
+            
+            body = {
+                "updated_upvotes": announcement.get_upvotes()
+            }            
+            
+            return self._respond(status_code=200, body=body)
+        else:
+            
+            body = {
+                "error": "Announcement not found"
+            }
+            
+            return self._respond(status_code=200, body=body) 
