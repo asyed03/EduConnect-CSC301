@@ -49,6 +49,10 @@ def add_announcement_endpoints(server: Flask, request_manager: AnnouncementReque
     server.add_url_rule("/announcements/comments/create", "announcement-comments-create", methods=["POST"], view_func=comment_request_manager.post_announcement_comment)
     server.add_url_rule("/announcements/comments/delete", "announcement-comments-delete", methods=["DELETE"], view_func=comment_request_manager.delete_announcement_comment)
 
+    server.add_url_rule("/announcements/upvote/<id>", "upvote-announcement", methods=["POST"], view_func=request_manager.post_upvote_announcement)
+    server.add_url_rule("/announcements/downvote/<id>", "downvote-announcement", methods=["POST"], view_func=request_manager.post_downvote_announcement)
+
+
 def add_internal_endpoints(server: Flask, request_manager: InternalRequestManager):
     server.add_url_rule("/internal/chat/group", "add-chat-group", methods=["POST"], view_func=request_manager.post_chat_group)
 

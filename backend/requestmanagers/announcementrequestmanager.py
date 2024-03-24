@@ -24,7 +24,9 @@ class AnnouncementRequestManager(RequestManager):
                 "id": announcement.get_id(),
                 "poster": poster.get_email(),
                 "message": announcement.get_message(),
-                "date": str(announcement.get_date())
+                "date": str(announcement.get_date()),
+                "upvotes": announcement.get_upvotes(),
+                "downvotes": announcement.get_downvotes()
             }
             res.append(a)
 
@@ -67,4 +69,42 @@ class AnnouncementRequestManager(RequestManager):
             "messsage": "deleted announcements with ids " + data.get('announcements')
         }
 
+        return self._respond(status_code=200, body=body)
+    
+    def post_upvote_announcement(self, id):
+        """
+        Handle a POST request to upvote an announcement.
+        :param id: The ID of the announcement
+        :return: Whether the request was a success or not.
+        """
+        data = request.get_json()
+        DatabaseManager.instance().upvote_announcement(id, data["user"])
+
+        announcement = DatabaseManager.instance().get_announcement(id)
+        if announcement is None:
+            return self._respond(status_code=404)
+
+        body = {
+            "upvotes": announcement.get_upvotes(),
+            "downvotes": announcement.get_downvotes()
+        }
+        return self._respond(status_code=200, body=body)
+
+    def post_downvote_announcement(self, id):
+        """
+        Handle a POST request to downvote an announcement.
+        :param id: The ID of the announcement
+        :return: Whether the request was a success or not.
+        """
+        data = request.get_json()
+        DatabaseManager.instance().downvote_announcement(id, data["user"])
+
+        announcement = DatabaseManager.instance().get_announcement(id)
+        if announcement is None:
+            return self._respond(status_code=404)
+
+        body = {
+            "upvotes": announcement.get_upvotes(),
+            "downvotes": announcement.get_downvotes()
+        }
         return self._respond(status_code=200, body=body)
