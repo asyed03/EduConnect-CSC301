@@ -8,6 +8,26 @@ class ChatEventManager(object):
         self.socket = socketio
         self.prefix = "http://127.0.0.1:8001/"
 
+    def post_personal_chat_message(self, data):
+        headers = {"Content-type": "application/json"}
+        response = requests.request("POST", self.prefix + "internal/chat/personal", data=data, headers=headers)
+
+        json_data = json.loads(data)
+
+        # Emit back to the chatroom
+        response = requests.request("GET", self.prefix + "users/" + json_data["sender"])
+        res = response.json()
+
+        user_response = {
+            "sender": json_data["sender"],
+            "sender_name": res["username"],
+            "content": json_data["content"]
+        }
+
+        print("Posting message to room: " + json_data["room"] + ". rooms: ")
+        print(rooms())
+        self.socket.emit("messageres", json.dumps(user_response), to=json_data["room"])
+
     def post_group_chat_message(self, data):
         # TODO: Some kind of authorization? pretty unsafe we completely trust the client in this case
         # Send internal call to database

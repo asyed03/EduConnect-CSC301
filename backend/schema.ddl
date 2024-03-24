@@ -68,6 +68,11 @@ CREATE TABLE IF NOT EXISTS personal_chat (
     PRIMARY KEY(id)
 );
 
+CREATE TABLE IF NOT EXISTS personal_rooms (
+    user_1 integer NOT NULL REFERENCES edu_user(id),
+    user_2 integer NOT NULL REFERENCES edu_user(id),
+    PRIMARY KEY (user_1, user_2)
+);
 
 CREATE TABLE IF NOT EXISTS announcement_comments (
     id serial NOT NULL,

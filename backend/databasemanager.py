@@ -201,6 +201,69 @@ class DatabaseManager(object):
             if cursor and not cursor.closed:
                 cursor.close()
 
+    def get_user_by_name(self, username: str) -> User | None:
+        """
+        Get a user with the given username.
+        :param username: The username of the user
+        :return: Object for the user, or None if not found
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT * FROM edu_user WHERE username = %s", [username])
+            if cursor.rowcount <= 0:
+                return None
+
+            r = cursor.fetchone()
+            user = User(int(r[0]), r[2], r[1], r[3])
+            self.connection.commit()
+            return user
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return None
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
+    def get_personal_messages(self, first_user: int, second_user: int) -> list:
+        """
+        Get all the messages in a given personal DM.
+        :param first_user: The ID of the first user
+        :param second_user: The ID of the second user
+        :return: A list of messages
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT * FROM personal_chat WHERE (sender_id = %s OR sender_id = %s) AND (receiver_id = %s OR receiver_id = %s)",
+                           [first_user, second_user, first_user, second_user])
+            if cursor.rowcount <= 0:
+                return []
+
+            messages = []
+            for record in cursor:
+                user = self.get_user(record[2])
+
+                if user is not None:
+                    msg = {
+                        "sender": record[2],
+                        "sender_name": user.get_username(),
+                        "content": record[1],
+                        "date": str(record[4])
+                    }
+                    messages.append(msg)
+
+            self.connection.commit()
+            return messages
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return []
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
     def get_group_messages(self, group_id: int) -> list:
         """
         Get all the messages in the given group.
@@ -332,6 +395,27 @@ class DatabaseManager(object):
             self.connection.rollback()
             print(ex)
             return 0
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
+    def create_personal_chat_room(self, user1: int, user2: int) -> bool:
+        """
+        Create a new personal chat room between the two given users.
+        :param user1: The first user
+        :param user2: The second user
+        :return: Whether the room could be made or not
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("INSERT INTO personal_rooms(user_1, user_2) VALUES (%s, %s)", [min(user1, user2), max(user1, user2)])
+            self.connection.commit()
+            return True
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return False
         finally:
             if cursor and not cursor.closed:
                 cursor.close()
@@ -506,6 +590,32 @@ class DatabaseManager(object):
 
             self.connection.commit()
             return groups
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return []
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
+    def get_personal_rooms_by_user(self, user_id: int) -> list[tuple]:
+        """
+        Get a list of personal rooms a user is a part of.
+        :param user_id: The ID of the user
+        :return: List of PersonalRoom objects
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT * FROM personal_rooms WHERE user_1 = %s OR user_2 = %s", [user_id, user_id])
+
+            rooms = []
+            for record in cursor:
+                room = (record[0], record[1])
+                rooms.append(room)
+
+            self.connection.commit()
+            return rooms
         except pg.Error as ex:
             self.connection.rollback()
             print(ex)
