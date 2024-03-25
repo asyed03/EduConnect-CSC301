@@ -1,3 +1,4 @@
+import math
 import os.path
 from flask import request
 from requestmanagers.requestmanager import RequestManager
@@ -88,6 +89,30 @@ class GroupRequestManager(RequestManager):
 
         return self._respond(status_code=200)
 
+    def post_rate_group(self, id):
+        """
+        Rate a group.
+        :param id: The id of the group
+        :return: Whether the rating was successful or not
+        """
+        data = request.get_json()
+        user_id = data["user_id"]
+        rating = data["rating"]
+
+        if rating < 0 or rating > 5:
+            return self._respond(status_code=400)
+
+        DatabaseManager.instance().rate_group(user_id, id, rating)
+        return self._respond(status_code=200)
+
+    def get_user_rating(self, group_id, user_id):
+        """
+        Get a user's rating on a group.
+        :return: Whether the rating was successful or not
+        """
+        rating = DatabaseManager.instance().get_rating(user_id, group_id)
+        return self._respond(status_code=200, body={"rating": rating})
+
     def get_all_groups(self):
         """
         Get all groups in the database.
@@ -97,12 +122,14 @@ class GroupRequestManager(RequestManager):
         res = []
         for group in groups:
             enrolled = DatabaseManager.instance().get_group_enrolled(group.get_id())
+            avg_rating = math.floor(DatabaseManager.instance().get_average_rating(group.get_id()))
             g = {
                 "id": group.get_id(),
                 "title": group.get_name(),
                 "description": group.get_description(),
                 "owner": group.get_owner(),
                 "enrolled": enrolled,
+                "rating": avg_rating,
                 "picture": group.get_picture()
             }
 
@@ -125,12 +152,14 @@ class GroupRequestManager(RequestManager):
         res = []
         for group in groups:
             enrolled = DatabaseManager.instance().get_group_enrolled(group.get_id())
+            avg_rating = math.floor(DatabaseManager.instance().get_average_rating(group.get_id()))
             g = {
                 "id": group.get_id(),
                 "title": group.get_name(),
                 "description": group.get_description(),
                 "owner": group.get_owner(),
                 "enrolled": enrolled,
+                "rating": avg_rating,
                 "picture": group.get_picture()
             }
 

@@ -20,6 +20,13 @@ CREATE TABLE IF NOT EXISTS edu_group (
     PRIMARY KEY(id)
 );
 
+CREATE TABLE IF NOT EXISTS group_rating (
+    rater integer NOT NULL REFERENCES edu_user(id),
+    group_id integer NOT NULL REFERENCES edu_group(id),
+    rating integer NOT NULL,
+    PRIMARY KEY(rater, group_id)
+);
+
 CREATE TABLE IF NOT EXISTS announcement (
     id serial NOT NULL,
     poster_id integer NOT NULL REFERENCES edu_user(id),

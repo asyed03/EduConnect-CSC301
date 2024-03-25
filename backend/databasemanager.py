@@ -727,6 +727,27 @@ class DatabaseManager(object):
             if cursor and not cursor.closed:
                 cursor.close()
 
+    def get_average_rating(self, group_id: int) -> int:
+        """
+        Get a group's average rating.
+        :param group_id: The ID of the group
+        :return: The average rating
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT AVG(rating) FROM group_rating WHERE group_id = %s", [group_id])
+            res = cursor.fetchone()[0]
+            self.connection.commit()
+            return res
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return 0
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
     def join_group(self, user_id: int, group_id: int) -> bool:
         """
         Join the group with the given user.
@@ -747,6 +768,68 @@ class DatabaseManager(object):
             self.connection.rollback()
             print(ex)
             return False
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
+    def rate_group(self, user_id: int, group_id: int, rating: int) -> bool:
+        """
+        Rate the group with the given user.
+        :param user_id: The user rating
+        :param group_id: The group to rate
+        :param rating: The rating of the group
+        :return: True if the operation was successful, false otherwise
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT * FROM group_rating WHERE rater = %s AND group_id = %s",
+                           [user_id, group_id])
+
+            # Update the rating
+            if cursor.rowcount > 0:
+                self.connection.commit()
+                cursor.execute("UPDATE group_rating SET rating = %s WHERE rater = %s AND group_id = %s",
+                               [rating, user_id, group_id])
+                self.connection.commit()
+                return True
+
+            cursor.execute("INSERT INTO group_rating(rater, group_id, rating) VALUES (%s, %s, %s)",
+                           [user_id, group_id, rating])
+            self.connection.commit()
+            return True
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return False
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
+    def get_rating(self, user_id: int, group_id: int) -> int:
+        """
+        Rate the group with the given user.
+        :param user_id: The user rating
+        :param group_id: The group to rate
+        :return: True if the operation was successful, false otherwise
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT rating FROM group_rating WHERE rater = %s AND group_id = %s",
+                           [user_id, group_id])
+
+            # Update the rating
+            if cursor.rowcount <= 0:
+                self.connection.commit()
+                return 0
+
+            self.connection.commit()
+            return cursor.fetchone()[0]
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return 0
         finally:
             if cursor and not cursor.closed:
                 cursor.close()

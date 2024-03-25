@@ -24,6 +24,8 @@ def add_group_endpoints(server: Flask, request_manager: GroupRequestManager):
     server.add_url_rule("/groups/user/<id>", "user-group-get", methods=["GET"], view_func=request_manager.get_user_groups)
     server.add_url_rule("/groups", "group-get-all", methods=["GET"], view_func=request_manager.get_all_groups)
     server.add_url_rule("/groups/join/<id>", "group-join", methods=["POST"], view_func=request_manager.post_join_group)
+    server.add_url_rule("/groups/rate/<id>", "group-rate", methods=["POST"], view_func=request_manager.post_rate_group)
+    server.add_url_rule("/groups/ratings/<group_id>/<user_id>", "group-get-rating-user", methods=["GET"], view_func=request_manager.get_user_rating)
     server.add_url_rule("/groups/<id>", "group-get", methods=["GET"], view_func=request_manager.get_group)
 
 
