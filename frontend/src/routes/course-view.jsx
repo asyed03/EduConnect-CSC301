@@ -35,8 +35,8 @@ const CourseView = () => {
       <Menu />
 
       <div className="course-view">
-        {courseData && courseData.banner && (
-          <div className="course-header" style={{ backgroundImage: `url(${courseData.banner})` }}>
+        {courseData && courseData.picture && (
+          <div className="course-header" style={{ backgroundImage: `url(http://127.0.0.1:8001/${courseData.picture})` }}>
             <h2>{courseData.title}</h2>
             <p>{courseData.description}</p>
           </div>

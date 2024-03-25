@@ -129,7 +129,7 @@ const Messages = () => {
           </div>
           {rooms.map(room => (
             <div key={room.id} onClick={() => selectRoom(room)} className={`room ${selectedRoom && selectedRoom.id === room.id ? 'selected' : ''}`}>
-              <img className='image' src="https://picsum.photos/200" />
+              <img className='image' src={`http://127.0.0.1:8001/${room.picture}`} />
               <div className='details'>
                 <div className="top-details">
                   <div className='roomName'>{room.title}</div>

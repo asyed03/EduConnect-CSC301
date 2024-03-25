@@ -4,7 +4,7 @@ import React from 'react';
 function CourseHighlight({ course, join }) {
   return (
     <div className="course-highlight">
-      <img src="https://picsum.photos/200" alt={course.title} className="course-image" />
+      <img src={`http://127.0.0.1:8001/${course.picture}`} alt={course.title} className="course-image" />
       <div className="course-info">
         <h3>{course.title}</h3>
         <span>{course.description}</span>

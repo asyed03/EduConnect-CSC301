@@ -12,13 +12,6 @@ function Register() {
 
   async function registerPost(event) {
     event.preventDefault();
-    const body = {
-      "email": email,
-      "username": username,
-      "password": password,
-      "confirmPassword": confirmPassword,
-      "picture": picture
-    };
 
     const fd = new FormData();
     fd.append("picture", picture);
