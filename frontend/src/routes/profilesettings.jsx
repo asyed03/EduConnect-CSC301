@@ -11,6 +11,7 @@ function ProfileSettings() {
   const [events, setEvents] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [picture, setPicture] = useState("");
 
   async function fetchData() {
     try {
@@ -18,6 +19,7 @@ function ProfileSettings() {
       const data = await res.json();
       setEmail(data.email);
       setUsername(data.username);
+      setPicture(`http://127.0.0.1:8001/${data.picture}`);
 
       const eventsResponse = await fetch(`http://127.0.0.1:8001/events/${sessionStorage.getItem("userid")}`);
       const eventsData = await eventsResponse.json();
@@ -107,6 +109,22 @@ function ProfileSettings() {
     console.log("POST: ", res)
   }
 
+  async function changePicture(file) {
+    const fd = new FormData();
+    fd.append("file", file);
+    fd.append("userid", sessionStorage.getItem("userid"));
+
+    const response = await fetch("http://127.0.0.1:8001/users/update/picture", {
+      method: "POST",
+      body: fd
+    });
+
+    const json = await response.json();
+    if (response.ok) {
+      setPicture(`http://127.0.0.1:8001/${json.path}?t=${new Date().getTime()}`);
+    }
+  }
+
   return (
     <>
       <Menu />
@@ -122,6 +140,10 @@ function ProfileSettings() {
         <div className="settings">
           <p className="error-message">{errorMessage}</p>
           <p className="success-message">{successMessage}</p>
+          <form encType="multipart/form-data" className="profile-picture">
+            <img src={picture} alt="profile picture" />
+            <input type="file" name="picture" id="picture" onChange={(e) => changePicture(e.target.files[0])} />
+          </form>
           <div className="settings-module personal" id="personal">
             <h3>Personal Information</h3>
             <label htmlFor="email">Email</label>
