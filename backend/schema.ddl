@@ -59,15 +59,22 @@ CREATE TABLE IF NOT EXISTS group_chat (
     PRIMARY KEY(id)
 );
 
+CREATE TABLE IF NOT EXISTS personal_rooms (
+    id serial NOT NULL UNIQUE,
+    user_1 integer NOT NULL REFERENCES edu_user(id),
+    user_2 integer NOT NULL REFERENCES edu_user(id),
+    PRIMARY KEY (user_1, user_2)
+);
+
 CREATE TABLE IF NOT EXISTS personal_chat (
     id serial NOT NULL,
-    content text NOT NULL,
+    room_id integer NOT NULL REFERENCES personal_rooms(id),
     sender_id integer NOT NULL REFERENCES edu_user(id),
     receiver_id integer NOT NULL REFERENCES edu_user(id),
+    content text NOT NULL,
     creation_date timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY(id)
 );
-
 
 CREATE TABLE IF NOT EXISTS announcement_comments (
     id serial NOT NULL,

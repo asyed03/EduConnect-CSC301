@@ -96,6 +96,78 @@ class UserRequestManager(RequestManager):
         messages.reverse()
         return self._respond(status_code=200, body=messages)
 
+    def get_personal_chat(self, id):
+        """
+        Handle a GET request for a personal DM chat.
+        :param id: The ID of the room
+        :return: A list of messages sent in the chat
+        """
+        messages = DatabaseManager.instance().get_personal_messages(int(id) - 0x0fffffff)
+        messages.reverse()
+        return self._respond(status_code=200, body=messages)
+
+    def post_personal_room(self):
+        """
+        Handle a POST request to create a personal chat room.
+        :return: Whether the request was successful or not
+        """
+        data = request.get_json()
+
+        username = data["username"]
+        user = DatabaseManager.instance().get_user_by_name(username)
+        if user is None:
+            body = {
+                "message": "A user with that name was not found."
+            }
+
+            return self._respond(status_code=404, body=body)
+
+        if user.get_id() == int(data["userid"]):
+            body = {
+                "message": "You cannot make a room with yourself."
+            }
+
+            return self._respond(status_code=401, body=body)
+
+        success = DatabaseManager.instance().create_personal_chat_room(int(data["userid"]), user.get_id())
+        if not success:
+            body = {
+                "message": "There already exists a chat room with this person."
+            }
+
+            return self._respond(status_code=401, body=body)
+
+        return self._respond(status_code=200)
+
+    def get_personal_rooms(self, id):
+        """
+        Handle a GET request to get all the user's personal chat rooms
+        :param id: The ID of the user
+        :return: All the personal rooms
+        """
+        user = DatabaseManager.instance().get_user(id)
+
+        if user is None:
+            return self._respond(status_code=404)
+
+        rooms = DatabaseManager.instance().get_personal_rooms_by_user(id)
+
+        res = []
+        for room in rooms:
+            other_user = DatabaseManager.instance().get_user(room[1] if room[1] != int(id) else room[2])
+            if other_user is None:
+                continue
+
+            r = {
+                "id": room[0] + 0x0fffffff,  # Just add with a big number to make sure it doesn't overlap with group IDs
+                "title": other_user.get_username(),
+                "description": "Personal room"
+            }
+            print(r)
+            res.append(r)
+
+        return self._respond(status_code=200, body=res)
+
     def post_user_change_password(self):
         """
         Handle a POST request for user updates.
