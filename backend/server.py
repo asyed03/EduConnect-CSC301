@@ -40,7 +40,7 @@ def add_user_endpoints(server: Flask, request_manager: UserRequestManager):
     server.add_url_rule("/users/update/password", "users-update-password", methods=["POST"], view_func=request_manager.post_user_change_password)
     server.add_url_rule("/chat/group/<id>", "get-group-chat", methods=["GET"], view_func=request_manager.get_group_chat)
     server.add_url_rule("/chat/personal/rooms/<id>", "get-personal-rooms", methods=["GET"], view_func=request_manager.get_personal_rooms)
-    server.add_url_rule("/chat/personal/<id>/<id2>", "get-personal-chat", methods=["GET"], view_func=request_manager.get_personal_chat)
+    server.add_url_rule("/chat/personal/<id>", "get-personal-chat", methods=["GET"], view_func=request_manager.get_personal_chat)
     server.add_url_rule("/chat/personal/create", "add-personal-chat", methods=["POST"], view_func=request_manager.post_personal_room)
 
 

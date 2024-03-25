@@ -226,18 +226,16 @@ class DatabaseManager(object):
             if cursor and not cursor.closed:
                 cursor.close()
 
-    def get_personal_messages(self, first_user: int, second_user: int) -> list:
+    def get_personal_messages(self, room_id: int) -> list:
         """
         Get all the messages in a given personal DM.
-        :param first_user: The ID of the first user
-        :param second_user: The ID of the second user
+        :param room_id: The ID of the room
         :return: A list of messages
         """
         cursor = None
         try:
             cursor = self.connection.cursor()
-            cursor.execute("SELECT * FROM personal_chat WHERE (sender_id = %s OR sender_id = %s) AND (receiver_id = %s OR receiver_id = %s)",
-                           [first_user, second_user, first_user, second_user])
+            cursor.execute("SELECT * FROM personal_chat WHERE room_id = %s", [room_id])
             if cursor.rowcount <= 0:
                 return []
 
@@ -249,8 +247,8 @@ class DatabaseManager(object):
                     msg = {
                         "sender": record[2],
                         "sender_name": user.get_username(),
-                        "content": record[1],
-                        "date": str(record[4])
+                        "content": record[4],
+                        "date": str(record[5])
                     }
                     messages.append(msg)
 
@@ -598,6 +596,33 @@ class DatabaseManager(object):
             if cursor and not cursor.closed:
                 cursor.close()
 
+    def get_personal_chat_room(self, room_id: int) -> tuple | None:
+        """
+        Get a personal chat room by its id.
+        :param room_id: The ID of the room
+        :return: A Room object
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT * FROM personal_rooms WHERE id = %s", [room_id])
+
+            if cursor.rowcount <= 0:
+                self.connection.commit()
+                return None
+
+            record = cursor.fetchone()
+            room = (record[0], record[1], record[2])
+            self.connection.commit()
+            return room
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return None
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
     def get_personal_rooms_by_user(self, user_id: int) -> list[tuple]:
         """
         Get a list of personal rooms a user is a part of.
@@ -611,7 +636,7 @@ class DatabaseManager(object):
 
             rooms = []
             for record in cursor:
-                room = (record[0], record[1])
+                room = (record[0], record[1], record[2])
                 rooms.append(room)
 
             self.connection.commit()
@@ -817,20 +842,21 @@ class DatabaseManager(object):
             if cursor and not cursor.closed:
                 cursor.close()
 
-    def insert_chat_personal(self, sender_id: int, receiver_id: int, content: str) -> int:
+    def insert_chat_personal(self, room_id: int, content: str, sender_id: int, receiver_id: int) -> int:
         """
         Inserts a chat into the specified personal chat
-        :param sender_id: The id of the sender of the message
-        :param receiver_id: The id of the receiver of the message
+        :param room_id: The id of the room
         :param content: The contents of the message
+        :param sender_id: The ID of the sender
+        :param receiver_id: The ID of the receiver
         :return: The ID of the new chat, or -1 if it was unsuccessful
         """
         cursor = None
         try:
             cursor = self.connection.cursor()
             
-            cursor.execute("INSERT INTO personal_chat(content, sender_id, receiver_id) VALUES(%s, %s, %s) RETURNING id",
-                           [content, sender_id, receiver_id])
+            cursor.execute("INSERT INTO personal_chat(content, room_id, sender_id, receiver_id) VALUES(%s, %s, %s, %s) RETURNING id",
+                           [content, int(room_id) - 0x0fffffff, sender_id, receiver_id])
 
             new_id = cursor.fetchone()
             if new_id[0] < 0:

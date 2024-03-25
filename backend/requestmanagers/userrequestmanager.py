@@ -96,14 +96,13 @@ class UserRequestManager(RequestManager):
         messages.reverse()
         return self._respond(status_code=200, body=messages)
 
-    def get_personal_chat(self, id, id2):
+    def get_personal_chat(self, id):
         """
         Handle a GET request for a personal DM chat.
-        :param id: The ID of the first user
-        :param id2: The ID of the second user
+        :param id: The ID of the room
         :return: A list of messages sent in the chat
         """
-        messages = DatabaseManager.instance().get_personal_messages(id, id2)
+        messages = DatabaseManager.instance().get_personal_messages(int(id) - 0x0fffffff)
         messages.reverse()
         return self._respond(status_code=200, body=messages)
 
@@ -122,6 +121,13 @@ class UserRequestManager(RequestManager):
             }
 
             return self._respond(status_code=404, body=body)
+
+        if user.get_id() == int(data["userid"]):
+            body = {
+                "message": "You cannot make a room with yourself."
+            }
+
+            return self._respond(status_code=401, body=body)
 
         success = DatabaseManager.instance().create_personal_chat_room(int(data["userid"]), user.get_id())
         if not success:
@@ -148,12 +154,12 @@ class UserRequestManager(RequestManager):
 
         res = []
         for room in rooms:
-            other_user = DatabaseManager.instance().get_user(room[0] if room[0] != id else room[1])
+            other_user = DatabaseManager.instance().get_user(room[1] if room[1] != int(id) else room[2])
             if other_user is None:
                 continue
 
             r = {
-                "id": other_user.get_id() + 0x0fffffff, # Just add with a big number to make sure it doesn't overlap with group IDs
+                "id": room[0] + 0x0fffffff,  # Just add with a big number to make sure it doesn't overlap with group IDs
                 "title": other_user.get_username(),
                 "description": "Personal room"
             }

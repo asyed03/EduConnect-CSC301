@@ -24,9 +24,9 @@ class ChatEventManager(object):
             "content": json_data["content"]
         }
 
-        print("Posting message to room: " + json_data["room"] + ". rooms: ")
+        print("Posting message to room: " + json_data["group"] + ". rooms: ")
         print(rooms())
-        self.socket.emit("messageres", json.dumps(user_response), to=json_data["room"])
+        self.socket.emit("messageres", json.dumps(user_response), to=json_data["group"])
 
     def post_group_chat_message(self, data):
         # TODO: Some kind of authorization? pretty unsafe we completely trust the client in this case

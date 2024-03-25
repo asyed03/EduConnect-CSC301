@@ -95,7 +95,8 @@ const Messages = () => {
       };
       socket.emit("join", JSON.stringify(bodyJoin));
 
-      const messagesResponse = await fetch(`http://127.0.0.1:8001/chat/group/${room.id}`);
+      const url = room.id >= 0x0fffffff ? `http://127.0.0.1:8001/chat/personal/${room.id}` : `http://127.0.0.1:8001/chat/group/${room.id}`;
+      const messagesResponse = await fetch(url);
       const messagesData = await messagesResponse.json();
       setMessages(messagesData);
     } catch (error) {
@@ -119,7 +120,13 @@ const Messages = () => {
       "content": newMessage
     };
 
-    socket.emit("group_message", JSON.stringify(body));
+    if (selectedRoom.id >= 0x0fffffff) {
+      // Personal
+      socket.emit("personal_message", JSON.stringify(body));
+    }
+    else {
+      socket.emit("group_message", JSON.stringify(body));
+    }
   }
 
   async function addNewChat(e) {
