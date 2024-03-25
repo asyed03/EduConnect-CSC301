@@ -88,7 +88,7 @@ class GroupRequestManager(RequestManager):
         :return: Whether the rating was successful or not
         """
         data = request.get_json()
-        user_id = data["userid"]
+        user_id = data["user_id"]
         rating = data["rating"]
 
         if rating < 0 or rating > 5:
@@ -96,6 +96,14 @@ class GroupRequestManager(RequestManager):
 
         DatabaseManager.instance().rate_group(user_id, id, rating)
         return self._respond(status_code=200)
+
+    def get_user_rating(self, group_id, user_id):
+        """
+        Get a user's rating on a group.
+        :return: Whether the rating was successful or not
+        """
+        rating = DatabaseManager.instance().get_rating(user_id, group_id)
+        return self._respond(status_code=200, body={"rating": rating})
 
     def get_all_groups(self):
         """
