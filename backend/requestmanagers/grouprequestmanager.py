@@ -81,6 +81,22 @@ class GroupRequestManager(RequestManager):
 
         return self._respond(status_code=200)
 
+    def post_rate_group(self, id):
+        """
+        Rate a group.
+        :param id: The id of the group
+        :return: Whether the rating was successful or not
+        """
+        data = request.get_json()
+        user_id = data["userid"]
+        rating = data["rating"]
+
+        if rating < 0 or rating > 5:
+            return self._respond(status_code=400)
+
+        DatabaseManager.instance().rate_group(user_id, id, rating)
+        return self._respond(status_code=200)
+
     def get_all_groups(self):
         """
         Get all groups in the database.

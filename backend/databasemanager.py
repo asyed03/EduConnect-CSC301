@@ -586,6 +586,40 @@ class DatabaseManager(object):
             if cursor and not cursor.closed:
                 cursor.close()
 
+    def rate_group(self, user_id: int, group_id: int, rating: int) -> bool:
+        """
+        Rate the group with the given user.
+        :param user_id: The user rating
+        :param group_id: The group to rate
+        :param rating: The rating of the group
+        :return: True if the operation was successful, false otherwise
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT * FROM group_rating WHERE rater = %s AND group = %s",
+                           [user_id, group_id])
+
+            # Update the rating
+            if cursor.rowcount > 0:
+                self.connection.commit()
+                cursor.execute("UPDATE group_rating SET rating = %s WHERE rater = %s AND group = %s",
+                               [rating, user_id, group_id])
+                self.connection.commit()
+                return True
+
+            cursor.execute("INSERT INTO group_rating(rater, group, rating) VALUES (%s, %s, %s)",
+                           [user_id, group_id, rating])
+            self.connection.commit()
+            return True
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return False
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
     def post_event(self, group: Group, poster: User, date: str, title: str, description: str):
         """
         Post a new event to the given group.
