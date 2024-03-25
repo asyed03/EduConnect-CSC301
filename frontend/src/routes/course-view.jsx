@@ -30,7 +30,6 @@ const CourseView = () => {
   }
 
   async function changeRating(rating) {
-
     const body = {
       "user_id": sessionStorage.getItem("userid"),
       "rating": rating+1

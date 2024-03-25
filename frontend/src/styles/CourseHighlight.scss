@@ -26,7 +26,7 @@
     transition: 0.2s;
     cursor: pointer;
 
-    svg {
+    svg.bi-chevron-right {
       transform: translateX(8px);
       transition: 0.2s;
     }
@@ -42,6 +42,16 @@
     flex-direction: column;
     flex-grow: 1;
     margin: 0px 1.5rem;
+
+    .course-rating {
+      display: flex;
+      flex-direction: row;
+      align-items: baseline;
+
+      p {
+        margin-right: 0.5rem;
+      }
+    }
 
     h3 {
       font-size: 27px;
