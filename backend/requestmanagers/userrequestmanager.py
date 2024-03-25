@@ -169,7 +169,8 @@ class UserRequestManager(RequestManager):
             r = {
                 "id": room[0] + 0x0fffffff,  # Just add with a big number to make sure it doesn't overlap with group IDs
                 "title": other_user.get_username(),
-                "description": "Personal room"
+                "description": "Personal room",
+                "picture": other_user.get_picture()
             }
             print(r)
             res.append(r)

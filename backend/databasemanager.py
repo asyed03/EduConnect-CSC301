@@ -245,7 +245,7 @@ class DatabaseManager(object):
                 return None
 
             r = cursor.fetchone()
-            user = User(int(r[0]), r[2], r[1], r[3])
+            user = User(int(r[0]), r[2], r[1], r[3], r[4])
             self.connection.commit()
             return user
         except pg.Error as ex:
