@@ -34,7 +34,7 @@ class UserRequestManager(RequestManager):
         Handle a POST request for a register attempt.
         :return: Whether the register was successful or not
         """
-        data = request.get_json()
+        data = request.form
 
         if data["email"] == "":
             body = {
@@ -60,10 +60,14 @@ class UserRequestManager(RequestManager):
             }
             return self._respond(status_code=401, body=body)
 
-        print(data["picture"])
         new_user = DatabaseManager.instance().register_user(data["email"], data["username"], data["password"])
 
         if new_user is not None:
+            picture = request.files.get("picture")
+            filename = f"user_pic_{new_user.get_id()}.{picture.filename[-3:]}"
+            picture.save(os.path.join("./static", filename))
+            new_user.picture = f"static/{filename}"
+            DatabaseManager.instance().update_user_picture(new_user.get_id(), new_user.get_picture())
             return self._respond(status_code=200)
 
         body = {
