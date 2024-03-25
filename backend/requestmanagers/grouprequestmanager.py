@@ -1,3 +1,5 @@
+import math
+
 from flask import request
 from requestmanagers.requestmanager import RequestManager
 from databasemanager import DatabaseManager
@@ -114,12 +116,14 @@ class GroupRequestManager(RequestManager):
         res = []
         for group in groups:
             enrolled = DatabaseManager.instance().get_group_enrolled(group.get_id())
+            avg_rating = math.floor(DatabaseManager.instance().get_average_rating(group.get_id()))
             g = {
                 "id": group.get_id(),
                 "title": group.get_name(),
                 "description": group.get_description(),
                 "owner": group.get_owner(),
-                "enrolled": enrolled
+                "enrolled": enrolled,
+                "rating": avg_rating
             }
 
             res.append(g)
@@ -141,12 +145,14 @@ class GroupRequestManager(RequestManager):
         res = []
         for group in groups:
             enrolled = DatabaseManager.instance().get_group_enrolled(group.get_id())
+            avg_rating = math.floor(DatabaseManager.instance().get_average_rating(group.get_id()))
             g = {
                 "id": group.get_id(),
                 "title": group.get_name(),
                 "description": group.get_description(),
                 "owner": group.get_owner(),
-                "enrolled": enrolled
+                "enrolled": enrolled,
+                "rating": avg_rating
             }
 
             res.append(g)

@@ -562,6 +562,27 @@ class DatabaseManager(object):
             if cursor and not cursor.closed:
                 cursor.close()
 
+    def get_average_rating(self, group_id: int) -> int:
+        """
+        Get a group's average rating.
+        :param group_id: The ID of the group
+        :return: The average rating
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT AVG(rating) FROM group_rating WHERE group_id = %s", [group_id])
+            res = cursor.fetchone()[0]
+            self.connection.commit()
+            return res
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return 0
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
     def join_group(self, user_id: int, group_id: int) -> bool:
         """
         Join the group with the given user.
