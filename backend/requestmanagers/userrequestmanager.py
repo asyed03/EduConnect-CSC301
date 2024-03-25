@@ -1,3 +1,5 @@
+import os.path
+
 from flask import request
 from requestmanagers.requestmanager import RequestManager
 from databasemanager import DatabaseManager
@@ -32,7 +34,7 @@ class UserRequestManager(RequestManager):
         Handle a POST request for a register attempt.
         :return: Whether the register was successful or not
         """
-        data = request.get_json()
+        data = request.form
 
         if data["email"] == "":
             body = {
@@ -61,6 +63,11 @@ class UserRequestManager(RequestManager):
         new_user = DatabaseManager.instance().register_user(data["email"], data["username"], data["password"])
 
         if new_user is not None:
+            picture = request.files.get("picture")
+            filename = f"user_pic_{new_user.get_id()}.{picture.filename[-3:]}"
+            picture.save(os.path.join("./static", filename))
+            new_user.picture = f"static/{filename}"
+            DatabaseManager.instance().update_user_picture(new_user.get_id(), new_user.get_picture())
             return self._respond(status_code=200)
 
         body = {
@@ -81,7 +88,8 @@ class UserRequestManager(RequestManager):
         res = {
             "id": user.get_id(),
             "username": user.get_username(),
-            "email": user.get_email()
+            "email": user.get_email(),
+            "picture": user.get_picture()
         }
 
         return self._respond(status_code=200, body=res)
@@ -95,6 +103,78 @@ class UserRequestManager(RequestManager):
         messages = DatabaseManager.instance().get_group_messages(id)
         messages.reverse()
         return self._respond(status_code=200, body=messages)
+
+    def get_personal_chat(self, id):
+        """
+        Handle a GET request for a personal DM chat.
+        :param id: The ID of the room
+        :return: A list of messages sent in the chat
+        """
+        messages = DatabaseManager.instance().get_personal_messages(int(id) - 0x0fffffff)
+        messages.reverse()
+        return self._respond(status_code=200, body=messages)
+
+    def post_personal_room(self):
+        """
+        Handle a POST request to create a personal chat room.
+        :return: Whether the request was successful or not
+        """
+        data = request.get_json()
+
+        username = data["username"]
+        user = DatabaseManager.instance().get_user_by_name(username)
+        if user is None:
+            body = {
+                "message": "A user with that name was not found."
+            }
+
+            return self._respond(status_code=404, body=body)
+
+        if user.get_id() == int(data["userid"]):
+            body = {
+                "message": "You cannot make a room with yourself."
+            }
+
+            return self._respond(status_code=401, body=body)
+
+        success = DatabaseManager.instance().create_personal_chat_room(int(data["userid"]), user.get_id())
+        if not success:
+            body = {
+                "message": "There already exists a chat room with this person."
+            }
+
+            return self._respond(status_code=401, body=body)
+
+        return self._respond(status_code=200)
+
+    def get_personal_rooms(self, id):
+        """
+        Handle a GET request to get all the user's personal chat rooms
+        :param id: The ID of the user
+        :return: All the personal rooms
+        """
+        user = DatabaseManager.instance().get_user(id)
+
+        if user is None:
+            return self._respond(status_code=404)
+
+        rooms = DatabaseManager.instance().get_personal_rooms_by_user(id)
+
+        res = []
+        for room in rooms:
+            other_user = DatabaseManager.instance().get_user(room[1] if room[1] != int(id) else room[2])
+            if other_user is None:
+                continue
+
+            r = {
+                "id": room[0] + 0x0fffffff,  # Just add with a big number to make sure it doesn't overlap with group IDs
+                "title": other_user.get_username(),
+                "description": "Personal room"
+            }
+            print(r)
+            res.append(r)
+
+        return self._respond(status_code=200, body=res)
 
     def post_user_change_password(self):
         """
@@ -129,7 +209,7 @@ class UserRequestManager(RequestManager):
 
             return self._respond(status_code=401, body=body)
 
-        res = DatabaseManager.instance().update_user(user_id, password=new_password)
+        res = DatabaseManager.instance().update_user_password(user_id, password=new_password)
 
         if res:
             body = {
@@ -141,6 +221,33 @@ class UserRequestManager(RequestManager):
                 "message": "Could not update information."
             }
             return self._respond(status_code=401, body=body)
+
+    def post_user_change_picture(self):
+        """
+        Handle a POST request for user updates.
+        :return: If the operation was successful
+        """
+        # data = request.get_json()
+        user_id = request.form.get("userid")
+        user = DatabaseManager.instance().get_user(user_id)
+        if not user:
+            body = {
+                "message": "Could not find the specified user."
+            }
+
+            return self._respond(status_code=404, body=body)
+
+        picture = request.files.get("file")
+        filename = f"user_pic_{user_id}.{picture.filename[-3:]}"
+        picture.save(os.path.join("./static", filename))
+        user.picture = f"static/{filename}"
+        DatabaseManager.instance().update_user_picture(user_id, user.picture)
+
+        body = {
+            "path": user.picture
+        }
+
+        return self._respond(status_code=200, body=body)
 
     def post_user_update(self):
         """

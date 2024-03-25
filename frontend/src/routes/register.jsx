@@ -8,22 +8,21 @@ function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [picture, setPicture] = useState(null);
 
   async function registerPost(event) {
     event.preventDefault();
-    const body = {
-      "email": email,
-      "username": username,
-      "password": password,
-      "confirmPassword": confirmPassword
-    };
+
+    const fd = new FormData();
+    fd.append("picture", picture);
+    fd.append("email", email);
+    fd.append("username", username);
+    fd.append("password", password);
+    fd.append("confirmPassword", confirmPassword);
 
     const response = await fetch("http://127.0.0.1:8001/register", {
       method: "POST",
-      body: JSON.stringify(body),
-      headers: {
-        "Content-type": "application/json"
-      }
+      body: fd
     });
 
     const res = response.status;
@@ -53,6 +52,7 @@ function Register() {
             <input type="text" name="username" id="username" placeholder='Username' value={username} onChange={(e) => setUsername(e.target.value)} />
             <input type="password" name="password" id="password" placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)} />
             <input type="password" name="confirmPassword" placeholder='Confirm Password' value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+            <input type="file" name="picture" onChange={(e) => {setPicture(e.target.files[0])}} />
 
             <input type="submit" value="SIGN UP" />
             <div className="sign-in">

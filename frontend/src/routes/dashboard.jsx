@@ -36,6 +36,8 @@ function Dashboard() {
       setActiveCourses(coursesData);
       setAllCourses(tempAll);
 
+      console.log(tempAll);
+
       // Find events
       const eventsResponse = await fetch(`http://127.0.0.1:8001/events/${sessionStorage.getItem("userid")}`);
       const eventsData = await eventsResponse.json();

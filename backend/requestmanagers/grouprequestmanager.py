@@ -1,5 +1,5 @@
 import math
-
+import os.path
 from flask import request
 from requestmanagers.requestmanager import RequestManager
 from databasemanager import DatabaseManager
@@ -24,13 +24,14 @@ class GroupRequestManager(RequestManager):
             return self._respond(status_code=404)
 
         enrolled = DatabaseManager.instance().get_group_enrolled(id)
+        print(group.get_picture())
         res = {
             "id": group.get_id(),
             "title": group.get_name(),
             "description": group.get_description(),
             "instructor": owner.get_email(),
             "enrolled": enrolled,
-            "banner": "https://picsum.photos/1920/1080"
+            "picture": group.get_picture()
         }
 
         return self._respond(status_code=200, body=res)
@@ -40,7 +41,7 @@ class GroupRequestManager(RequestManager):
         Handle a POST request for creating a new educational group.
         :return: The details of the created group
         """
-        data = request.get_json()
+        data = request.form
         user_id = data.get("userid")
         owner = DatabaseManager.instance().get_user(user_id)
 
@@ -62,6 +63,11 @@ class GroupRequestManager(RequestManager):
         new_group = DatabaseManager.instance().create_group(group_name, group_desc, user_id)
 
         if new_group is not None:
+            picture = request.files.get("picture")
+            filename = f"group_pic_{new_group.get_id()}.{picture.filename[-3:]}"
+            picture.save(os.path.join("./static", filename))
+            new_group.picture = f"static/{filename}"
+            DatabaseManager.instance().update_group_picture(new_group.get_id(), new_group.get_picture())
             return self._respond(status_code=200)
 
         body = {
@@ -123,7 +129,8 @@ class GroupRequestManager(RequestManager):
                 "description": group.get_description(),
                 "owner": group.get_owner(),
                 "enrolled": enrolled,
-                "rating": avg_rating
+                "rating": avg_rating,
+                "picture": group.get_picture()
             }
 
             res.append(g)
@@ -152,7 +159,8 @@ class GroupRequestManager(RequestManager):
                 "description": group.get_description(),
                 "owner": group.get_owner(),
                 "enrolled": enrolled,
-                "rating": avg_rating
+                "rating": avg_rating,
+                "picture": group.get_picture()
             }
 
             res.append(g)

@@ -32,6 +32,21 @@
         flex-grow: 1;
         text-align: left;
 
+        .profile-picture {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+
+            img {
+                width: 128px;
+                margin-left: 1rem;
+                margin-right: 1rem;
+                border-radius: 50%;
+                outline: 1px solid gray;
+            }
+        }
+
+
         .settings-module {
             background-color: white;
             padding: 2rem;
