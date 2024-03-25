@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS edu_user (
     username text NOT NULL UNIQUE,
     email text NOT NULL,
     password text NOT NULL,
+    picture text NOT NULL DEFAULT 'static/__default_pic.jpg',
     PRIMARY KEY(id)
 );
 
@@ -15,6 +16,7 @@ CREATE TABLE IF NOT EXISTS edu_group (
     description text NOT NULL,
     owner integer NOT NULL REFERENCES edu_user(id),
     creation_date timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    picture text NOT NULL DEFAULT 'static/__default_pic.jpg',
     PRIMARY KEY(id)
 );
 

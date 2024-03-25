@@ -6,23 +6,22 @@ function GroupRegister() {
   const [groupDesc, setGroupDesc] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [picture, setPicture] = useState("");
 
   async function groupRegisterPost(event) {
     event.preventDefault();
-    const body = {
-      "userid": sessionStorage.getItem("userid"),
-      "groupName": groupName,
-      "groupDesc": groupDesc
-    };
+    const fd = new FormData();
+    fd.append("userid", sessionStorage.getItem("userid"));
+    fd.append("groupName", groupName);
+    fd.append("groupDesc", groupDesc);
+    fd.append("picture", picture);
 
     try {
       const response = await fetch("http://127.0.0.1:8001/groupregister", {
         method: "POST",
-        body: JSON.stringify(body),
-        headers: {
-          "Content-type": "application/json"
-        }
+        body: fd
       });
+
       const res = response.status;
       const json = await response.json();
       // Check if the response status indicates success
@@ -64,6 +63,7 @@ function GroupRegister() {
               placeholder="A short description..."
               onChange={(e) => setGroupDesc(e.target.value)}
             />
+            <input type="file" name="picture" onChange={(e) => setPicture(e.target.files[0])} />
             <input type="submit" value="CREATE COURSE" />
           </form>
         </div>

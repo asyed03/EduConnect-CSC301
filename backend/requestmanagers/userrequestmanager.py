@@ -1,3 +1,5 @@
+import os.path
+
 from flask import request
 from requestmanagers.requestmanager import RequestManager
 from databasemanager import DatabaseManager
@@ -32,7 +34,7 @@ class UserRequestManager(RequestManager):
         Handle a POST request for a register attempt.
         :return: Whether the register was successful or not
         """
-        data = request.get_json()
+        data = request.form
 
         if data["email"] == "":
             body = {
@@ -61,6 +63,11 @@ class UserRequestManager(RequestManager):
         new_user = DatabaseManager.instance().register_user(data["email"], data["username"], data["password"])
 
         if new_user is not None:
+            picture = request.files.get("picture")
+            filename = f"user_pic_{new_user.get_id()}.{picture.filename[-3:]}"
+            picture.save(os.path.join("./static", filename))
+            new_user.picture = f"static/{filename}"
+            DatabaseManager.instance().update_user_picture(new_user.get_id(), new_user.get_picture())
             return self._respond(status_code=200)
 
         body = {
@@ -81,7 +88,8 @@ class UserRequestManager(RequestManager):
         res = {
             "id": user.get_id(),
             "username": user.get_username(),
-            "email": user.get_email()
+            "email": user.get_email(),
+            "picture": user.get_picture()
         }
 
         return self._respond(status_code=200, body=res)
@@ -201,7 +209,7 @@ class UserRequestManager(RequestManager):
 
             return self._respond(status_code=401, body=body)
 
-        res = DatabaseManager.instance().update_user(user_id, password=new_password)
+        res = DatabaseManager.instance().update_user_password(user_id, password=new_password)
 
         if res:
             body = {
@@ -213,6 +221,33 @@ class UserRequestManager(RequestManager):
                 "message": "Could not update information."
             }
             return self._respond(status_code=401, body=body)
+
+    def post_user_change_picture(self):
+        """
+        Handle a POST request for user updates.
+        :return: If the operation was successful
+        """
+        # data = request.get_json()
+        user_id = request.form.get("userid")
+        user = DatabaseManager.instance().get_user(user_id)
+        if not user:
+            body = {
+                "message": "Could not find the specified user."
+            }
+
+            return self._respond(status_code=404, body=body)
+
+        picture = request.files.get("file")
+        filename = f"user_pic_{user_id}.{picture.filename[-3:]}"
+        picture.save(os.path.join("./static", filename))
+        user.picture = f"static/{filename}"
+        DatabaseManager.instance().update_user_picture(user_id, user.picture)
+
+        body = {
+            "path": user.picture
+        }
+
+        return self._respond(status_code=200, body=body)
 
     def post_user_update(self):
         """

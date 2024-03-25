@@ -14,6 +14,7 @@ PORT = 8001
 
 def create_server():
     app = Flask(__name__)
+    app.config['UPLOAD_FOLDER'] = '/static'
     CORS(app)
     return app
 
@@ -38,6 +39,7 @@ def add_user_endpoints(server: Flask, request_manager: UserRequestManager):
     server.add_url_rule("/users/<id>", "users-get", methods=["GET"], view_func=request_manager.get_user)
     server.add_url_rule("/users/update", "users-update", methods=["POST"], view_func=request_manager.post_user_update)
     server.add_url_rule("/users/update/password", "users-update-password", methods=["POST"], view_func=request_manager.post_user_change_password)
+    server.add_url_rule("/users/update/picture", "users-update-picture", methods=["POST"], view_func=request_manager.post_user_change_picture)
     server.add_url_rule("/chat/group/<id>", "get-group-chat", methods=["GET"], view_func=request_manager.get_group_chat)
     server.add_url_rule("/chat/personal/rooms/<id>", "get-personal-rooms", methods=["GET"], view_func=request_manager.get_personal_rooms)
     server.add_url_rule("/chat/personal/<id>", "get-personal-chat", methods=["GET"], view_func=request_manager.get_personal_chat)

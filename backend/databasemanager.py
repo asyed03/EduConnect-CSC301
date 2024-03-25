@@ -81,7 +81,7 @@ class DatabaseManager(object):
 
             self.connection.commit()
             print("Created user with ID: " + str(new_id[0]))
-            return User(new_id[0], email, username, password)
+            return User(new_id[0], email, username, password, '')
         except pg.Error as ex:
             self.connection.rollback()
             print(ex)
@@ -105,7 +105,7 @@ class DatabaseManager(object):
                 return None
 
             r = cursor.fetchone()
-            user = User(int(r[0]), r[2], r[1], r[3])
+            user = User(int(r[0]), r[2], r[1], r[3], r[4])
             self.connection.commit()
             return user
         except pg.Error as ex:
@@ -156,6 +156,36 @@ class DatabaseManager(object):
             if cursor and not cursor.closed:
                 cursor.close()
 
+    def update_user_picture(self, user_id: int, picture: str) -> bool:
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("UPDATE edu_user SET picture = %s WHERE id = %s", [picture, user_id])
+            self.connection.commit()
+            return True
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return False
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
+    def update_group_picture(self, group_id: int, picture: str) -> bool:
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("UPDATE edu_group SET picture = %s WHERE id = %s", [picture, group_id])
+            self.connection.commit()
+            return True
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return False
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
     def update_user_password(self, user_id: int, password: str) -> bool:
         """
         Update a user's email.
@@ -190,7 +220,7 @@ class DatabaseManager(object):
                 return None
 
             r = cursor.fetchone()
-            user = User(int(r[0]), r[2], r[1], r[3])
+            user = User(int(r[0]), r[2], r[1], r[3], r[4])
             self.connection.commit()
             return user
         except pg.Error as ex:
@@ -537,7 +567,7 @@ class DatabaseManager(object):
 
             self.connection.commit()
             print("Created group with ID: " + str(new_id[0]))
-            return Group(new_id[0], name, desc, owner, new_id[1])
+            return Group(new_id[0], name, desc, owner, "", new_id[1])
         except pg.Error as ex:
             self.connection.rollback()
             print(ex)
@@ -560,7 +590,7 @@ class DatabaseManager(object):
                 return None
 
             g = cursor.fetchone()
-            group = Group(g[0], g[1], g[2], g[3], g[4])
+            group = Group(g[0], g[1], g[2], g[3], g[5], g[4])
             self.connection.commit()
             return group
         except pg.Error as ex:
@@ -583,7 +613,7 @@ class DatabaseManager(object):
 
             groups = []
             for record in cursor:
-                group = Group(record[0], record[1], record[2], record[3], record[4])
+                group = Group(record[0], record[1], record[2], record[3], record[5], record[4])
                 groups.append(group)
 
             self.connection.commit()

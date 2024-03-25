@@ -6,11 +6,12 @@ class Group:
     Representation of an educational group.
     """
 
-    def __init__(self, group_id: int, name: str, description: str, owner: int, creation_date: datetime = None):
+    def __init__(self, group_id: int, name: str, description: str, owner: int, picture: str, creation_date: datetime = None):
         self.group_id = group_id
         self.name = name
         self.description = description
         self.owner = owner
+        self.picture = picture
         self.creation_date = creation_date or datetime.now()
 
     def get_id(self):
@@ -27,3 +28,6 @@ class Group:
 
     def get_creation_date(self):
         return self.creation_date
+
+    def get_picture(self):
+        return self.picture
