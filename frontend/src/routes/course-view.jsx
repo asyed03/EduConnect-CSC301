@@ -9,10 +9,17 @@ const CourseView = () => {
   const { courseId } = useParams();
   const [courseData, setCourseData] = useState(null);
   const [announcements, setAnnouncements] = useState([]);
+  const [nightMode, setNightMode] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
       try {
+
+        // Fetch user details
+        const res = await fetch(`http://127.0.0.1:8001/users/${sessionStorage.getItem("userid")}`);
+        const data_user = await res.json();
+        setNightMode(data_user.nightmode);
+
         // Fetch course details
         const response = await fetch(`http://127.0.0.1:8001/groups/${courseId}`);
         const data = await response.json();
@@ -34,7 +41,7 @@ const CourseView = () => {
     <>
       <Menu />
 
-      <div className="course-view">
+      <div className={`course-view ${nightMode ? 'night-mode' : ''}`}> {/* Apply night mode class */}
         {courseData && courseData.banner && (
           <div className="course-header" style={{ backgroundImage: `url(${courseData.banner})` }}>
             <h2>{courseData.title}</h2>

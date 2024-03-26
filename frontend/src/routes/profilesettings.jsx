@@ -11,7 +11,7 @@ function ProfileSettings() {
   const [events, setEvents] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const [nightMode, setNightMode] = useState("");
+  const [nightMode, setNightMode] = useState(false);
 
   async function fetchData() {
     try {

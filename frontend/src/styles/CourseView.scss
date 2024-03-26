@@ -49,6 +49,28 @@
     justify-content: start;
     align-items: center;
   }
+
+  /* Night mode styles */
+  &.night-mode {
+    background-color: #333;
+    color: #fff;
+
+    .course-header {
+      background-color: #222;
+      color: #fff;
+    }
+
+    .course-details,
+    .course-announcements {
+      border-color: #555;
+      color: #333;
+    }
+
+    .create-btn {
+      background-color: #555;
+      color: #fff;
+    }
+  }
 }
 
 @media (max-width: 768px) {
