@@ -11,6 +11,7 @@ function Dashboard() {
   const [allCourses, setAllCourses] = useState([]);
   const [allSearched, setAllSearched] = useState(null);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const [nightMode, setNightMode] = useState(false);
 
   async function fetchData() {
     try {
@@ -21,6 +22,11 @@ function Dashboard() {
       // Find all other courses
       const allCoursesResponse = await fetch("http://127.0.0.1:8001/groups");
       const allCoursesData = await allCoursesResponse.json();
+
+      // Get data for users (to initialize nightmode)
+      const res = await fetch(`http://127.0.0.1:8001/users/${sessionStorage.getItem("userid")}`);
+      const data = await res.json();
+      setNightMode(data.nightmode);
       
       // Remove overlap
       const tempAll = allCoursesData.filter((course) => {
@@ -127,9 +133,9 @@ function Dashboard() {
 
   return (
     <>
-      <Menu handleSearch={handleSearch} />
+      <Menu handleSearch={handleSearch}/>
 
-      <div className="dashboard">
+      <div className={`dashboard ${nightMode ? 'night-mode' : ''}`}> {/* Apply night mode styles */}
         <div className="group-main">
           <Link to="/groupregister">
             <button className="create-btn">Create Course</button>

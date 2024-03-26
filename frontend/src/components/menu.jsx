@@ -7,6 +7,7 @@ function Menu(props) {
   const [profilePic, setProfilePic] = useState('');
   const [expanded, setExpanded] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const [nightMode, setNightMode] = useState(false); // Add night mode state
 
   async function fetchData() {
     const res = await fetch(`http://127.0.0.1:8001/users/${sessionStorage.getItem("userid")}`);
@@ -57,6 +58,19 @@ function Menu(props) {
 
     //fetchNotifications();
     */
+
+    // Fetch night mode setting
+    const fetchNightMode = async () => {
+      try {
+        const res = await fetch(`http://127.0.0.1:8001/users/${sessionStorage.getItem("userid")}`);
+        const data = await res.json();
+        setNightMode(data.nightmode);
+      } catch (error) {
+        console.error("Error fetching night mode setting:", error);
+      }
+    };
+
+    fetchNightMode();
   }, []);
 
   function handleSearch(e) {
@@ -67,7 +81,7 @@ function Menu(props) {
 
   return (
     <>
-      <div className="menu">
+      <div className={`menu ${nightMode ? 'night-mode' : ''}`}> {/* Apply night mode styles */}
         <div className="menu-left">
           <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="green" className="bi bi-list" viewBox="0 0 16 16" onClick={() => setExpanded(!expanded)}>
             <path fillRule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5" />

@@ -11,18 +11,25 @@ const Messages = () => {
   const [newMessage, setNewMessage] = useState('');
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [newChatText, setNewChatText] = useState('');
+  const [nightMode, setNightMode] = useState(false);
 
   async function fetchRooms() {
     try {
       // Find enrolled courses
       const coursesResponse = await fetch(`http://127.0.0.1:8001/groups/user/${sessionStorage.getItem("userid")}`);
       const coursesData = await coursesResponse.json();
+      setRooms(coursesData);
 
       const personalResponse = await fetch(`http://127.0.0.1:8001/chat/personal/rooms/${sessionStorage.getItem("userid")}`);
       const personalData = await personalResponse.json();
 
       const final = coursesData.concat(personalData)
       setRooms(final);
+      
+      // Get data for users (to initialize nightmode)
+      const userResponse = await fetch(`http://127.0.0.1:8001/users/${sessionStorage.getItem("userid")}`);
+      const userData = await userResponse.json();
+      setNightMode(userData.nightmode);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -172,7 +179,7 @@ const Messages = () => {
   return (
     <>
       <Menu />
-      <div className="messages-container">
+      <div className={`messages-container ${nightMode ? 'night-mode' : ''}`}> {/* Apply night mode styles */}
         <div className="rooms">
           <div className='roomsHeader'>
             <h2>Messaging</h2>
