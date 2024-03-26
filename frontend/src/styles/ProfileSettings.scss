@@ -110,3 +110,42 @@
         }
     }
 }
+
+.profile.night-mode {
+    // Night mode styles for the profile page
+    background-color: #333;
+    color: #fff;
+  
+    // Night mode styles for nested elements
+    * {
+      color: #fff;
+    }
+  
+    .navigation a {
+      color: #fff;
+    }
+  
+    .settings-module {
+      background-color: #555;
+    }
+  
+    .settings-module h3 {
+      color: #fff; 
+    }
+  
+    .settings-module input[type="text"],
+    .settings-module input[type="password"] {
+      background-color: #666;
+      color: #fff;
+    }
+  
+    .settings-module button {
+      background-color: #777;
+      color: #fff;
+    }
+  
+    .event-list {
+      // Night mode styles for event list
+    }
+  }
+  

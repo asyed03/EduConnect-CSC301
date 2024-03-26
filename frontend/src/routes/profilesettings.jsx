@@ -11,6 +11,7 @@ function ProfileSettings() {
   const [events, setEvents] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [nightMode, setNightMode] = useState("");
 
   async function fetchData() {
     try {
@@ -18,6 +19,7 @@ function ProfileSettings() {
       const data = await res.json();
       setEmail(data.email);
       setUsername(data.username);
+      setNightMode(data.nightmode);
 
       const eventsResponse = await fetch(`http://127.0.0.1:8001/events/${sessionStorage.getItem("userid")}`);
       const eventsData = await eventsResponse.json();
@@ -107,11 +109,35 @@ function ProfileSettings() {
     console.log("POST: ", res)
   }
 
+  async function toggleNightMode() {
+    try {
+      const body = {
+        "userid": sessionStorage.getItem("userid"),
+      };
+
+      const response = await fetch("http://127.0.0.1:8001/users/toggle-night-mode", {
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: {
+          "Content-type": "application/json"
+        }
+      });
+
+      if (response.ok) {
+        setNightMode(!nightMode); // toggle night mode state locally
+      } else {
+        console.error("Failed to toggle night mode");
+      }
+    } catch (error) {
+      console.error("Error toggling night mode:", error);
+    }
+  }
+
   return (
     <>
       <Menu />
 
-      <div className="profile">
+      <div className={`profile ${nightMode ? 'night-mode' : ''}`}> {/* 4. Apply night mode styles */}
         <div className="navigation">
           <h3>Profile Settings</h3>
           <a href="#personal">Personal Information</a>
@@ -142,6 +168,12 @@ function ProfileSettings() {
                 onChange={(e) => setNewPasswordConfirm(e.target.value)} />
             </div>
             <button onClick={changePassword}>CHANGE PASSWORD</button>
+          </div>
+
+          {/* Add night mode toggle button */}
+          <div className="settings-module night-mode-toggle">
+            <h3>Night Mode</h3>
+            <button onClick={toggleNightMode}>{nightMode ? 'Disable Night Mode' : 'Enable Night Mode'}</button>
           </div>
 
           <div className="settings-module attending-events" id="events">

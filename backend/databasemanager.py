@@ -26,7 +26,7 @@ class DatabaseManager(object):
 
     def _initialize(self):
         try:
-            self.connection = pg.connect("user=postgres password=admin")
+            self.connection = pg.connect("user=postgres password=qwerty")
             self._setup_database()
             return True
         except pg.Error as ex:
@@ -72,8 +72,8 @@ class DatabaseManager(object):
         cursor = None
         try:
             cursor = self.connection.cursor()
-            cursor.execute("INSERT INTO edu_user(username, email, password) VALUES(%s, %s, %s) RETURNING id;",
-                           [username, email, password])
+            cursor.execute("INSERT INTO edu_user(username, email, password, nightmode) VALUES(%s, %s, %s, %s) RETURNING id;",
+                       [username, email, password, False])
 
             new_id = cursor.fetchone()
             if new_id[0] <= 0:
@@ -175,6 +175,38 @@ class DatabaseManager(object):
         finally:
             if cursor and not cursor.closed:
                 cursor.close()
+                
+    def toggle_night_mode(self, user_id: int) -> bool:
+        """
+        Toggle night mode for the user in the database.
+        :param user_id: The ID of the user
+        :return: True if night mode toggled successfully, False otherwise
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            # First, fetch the current nightmode status for the user
+            cursor.execute("SELECT nightmode FROM edu_user WHERE id = %s", [user_id])
+            result = cursor.fetchone()
+            if result is None:
+                # User not found
+                return False
+            current_night_mode = result[0]
+    
+            # Toggle nightmode
+            new_night_mode = not current_night_mode
+    
+            # Update the user's nightmode status
+            cursor.execute("UPDATE edu_user SET nightmode = %s WHERE id = %s", [new_night_mode, user_id])
+            self.connection.commit()
+            return True
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return False
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
 
     def get_user(self, identifier: int) -> User | None:
         """
@@ -190,7 +222,7 @@ class DatabaseManager(object):
                 return None
 
             r = cursor.fetchone()
-            user = User(int(r[0]), r[2], r[1], r[3])
+            user = User(int(r[0]), r[2], r[1], r[3], r[4])
             self.connection.commit()
             return user
         except pg.Error as ex:

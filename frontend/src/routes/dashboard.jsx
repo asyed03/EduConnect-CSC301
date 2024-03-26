@@ -11,7 +11,6 @@ function Dashboard() {
   const [allCourses, setAllCourses] = useState([]);
   const [allSearched, setAllSearched] = useState(null);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
-  const [nightMode, setNightMode] = useState(false);
 
   async function fetchData() {
     try {
@@ -44,11 +43,6 @@ function Dashboard() {
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  }
-
-  // Toggle night mode
-  function toggleNightMode() {
-    setNightMode(prevMode => !prevMode);
   }
 
   useEffect(() => {
@@ -131,9 +125,9 @@ function Dashboard() {
 
   return (
     <>
-      <Menu handleSearch={handleSearch} toggleNightMode={toggleNightMode} nightMode={nightMode} /> {/* Pass nightMode and toggleNightMode to Menu component */}
+      <Menu handleSearch={handleSearch}/>
 
-      <div className={`dashboard ${nightMode ? 'night-mode' : ''}`}> {/* Add night-mode class conditionally */}
+      <div className={"dashboard"}>
         <div className="group-main">
           <Link to="/groupregister">
             <button className="create-btn">Create Course</button>

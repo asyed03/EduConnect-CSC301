@@ -81,7 +81,8 @@ class UserRequestManager(RequestManager):
         res = {
             "id": user.get_id(),
             "username": user.get_username(),
-            "email": user.get_email()
+            "email": user.get_email(),
+            "nightmode": user.get_nightmode()
         }
 
         return self._respond(status_code=200, body=res)
@@ -229,3 +230,31 @@ class UserRequestManager(RequestManager):
                 "message": "Could not update information."
             }
             return self._respond(status_code=401, body=body)
+        
+    def post_toggle_night_mode(self):
+        """
+        Handle a POST request to toggle night mode for a user.
+        :return: Whether the toggle operation was successful or not
+        """
+        data = request.get_json()
+        user_id = data.get("userid")
+    
+        if user_id is None:
+            body = {
+                "message": "User ID is required."
+            }
+            return self._respond(status_code=400, body=body)
+    
+        # Toggle night mode for the user in the database
+        success = DatabaseManager.instance().toggle_night_mode(user_id)
+    
+        if success:
+            body = {
+                "message": "Night mode toggled successfully."
+            }
+            return self._respond(status_code=200, body=body)
+        else:
+            body = {
+                "message": "Failed to toggle night mode for the user."
+            }
+            return self._respond(status_code=500, body=body)

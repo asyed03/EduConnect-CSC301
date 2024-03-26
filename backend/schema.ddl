@@ -6,7 +6,8 @@ CREATE TABLE IF NOT EXISTS edu_user (
     username text NOT NULL UNIQUE,
     email text NOT NULL,
     password text NOT NULL,
-    PRIMARY KEY(id)
+    PRIMARY KEY(id),
+    nightmode BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS edu_group (
