@@ -67,4 +67,15 @@
     border-radius: 50%;
     outline: 2px solid green;
   }
+
+  // Night mode styles for top menu - issue is that it doesn't change immediately on button click. It requires a refresh.
+  //&.night-mode {
+  //  background-color: #333; // Dark background color
+  //  color: #fff; // White text color
+  //}
+
+  // Additional night mode styles for specific elements
+  //.icons a {
+  //  color: #ccc; // Light gray color for icons in night mode
+  //}
 }
