@@ -99,11 +99,12 @@
                 background: linear-gradient(180deg, rgb(65, 115, 224) 0%, rgb(59, 167, 218) 100%);
                 transition: 0.2s;
                 font-family: 'Poppins', sans-serif;
+                
 
                 &:hover {
                     cursor: pointer;
                     opacity: 0.8;
-                    width: 18%;
+                    transform: scale(1.1);
                     transition: 0.2s;
                 }
             }
@@ -135,12 +136,12 @@
   
     .settings-module input[type="text"],
     .settings-module input[type="password"] {
-      background-color: #666;
-      color: #fff;
+      background-color: #e8e8e8;
+      color: black;
     }
   
     .settings-module button {
-      background-color: #777;
+      background-color: #cacaca;
       color: #fff;
     }
   
