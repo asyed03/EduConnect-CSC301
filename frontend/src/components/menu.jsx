@@ -8,9 +8,19 @@ function Menu(props) {
   const [expanded, setExpanded] = useState(false);
   const [notifications, setNotifications] = useState([]);
 
+  async function fetchData() {
+    const res = await fetch(`http://127.0.0.1:8001/users/${sessionStorage.getItem("userid")}`);
+    const data = await res.json();
+    setProfilePic(`http://127.0.0.1:8001/${data.picture}`);
+  }
+
   useEffect(() => {
     // Fetch profile picture
-    setProfilePic('https://picsum.photos/200/300?grayscale');
+    async function fetchProfile() {
+      await fetchData();
+    }
+
+    fetchProfile();
 
     // Fetch notifications
     /*

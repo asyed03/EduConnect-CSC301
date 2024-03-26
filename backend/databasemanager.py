@@ -81,7 +81,7 @@ class DatabaseManager(object):
 
             self.connection.commit()
             print("Created user with ID: " + str(new_id[0]))
-            return User(new_id[0], email, username, password)
+            return User(new_id[0], email, username, password, '')
         except pg.Error as ex:
             self.connection.rollback()
             print(ex)
@@ -105,7 +105,7 @@ class DatabaseManager(object):
                 return None
 
             r = cursor.fetchone()
-            user = User(int(r[0]), r[2], r[1], r[3])
+            user = User(int(r[0]), r[2], r[1], r[3], r[4])
             self.connection.commit()
             return user
         except pg.Error as ex:
@@ -156,6 +156,36 @@ class DatabaseManager(object):
             if cursor and not cursor.closed:
                 cursor.close()
 
+    def update_user_picture(self, user_id: int, picture: str) -> bool:
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("UPDATE edu_user SET picture = %s WHERE id = %s", [picture, user_id])
+            self.connection.commit()
+            return True
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return False
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
+    def update_group_picture(self, group_id: int, picture: str) -> bool:
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("UPDATE edu_group SET picture = %s WHERE id = %s", [picture, group_id])
+            self.connection.commit()
+            return True
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return False
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
     def update_user_password(self, user_id: int, password: str) -> bool:
         """
         Update a user's email.
@@ -190,6 +220,31 @@ class DatabaseManager(object):
                 return None
 
             r = cursor.fetchone()
+            user = User(int(r[0]), r[2], r[1], r[3], r[4])
+            self.connection.commit()
+            return user
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return None
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
+    def get_user_by_name(self, username: str) -> User | None:
+        """
+        Get a user with the given username.
+        :param username: The username of the user
+        :return: Object for the user, or None if not found
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT * FROM edu_user WHERE username = %s", [username])
+            if cursor.rowcount <= 0:
+                return None
+
+            r = cursor.fetchone()
             user = User(int(r[0]), r[2], r[1], r[3])
             self.connection.commit()
             return user
@@ -197,6 +252,42 @@ class DatabaseManager(object):
             self.connection.rollback()
             print(ex)
             return None
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
+    def get_personal_messages(self, room_id: int) -> list:
+        """
+        Get all the messages in a given personal DM.
+        :param room_id: The ID of the room
+        :return: A list of messages
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT * FROM personal_chat WHERE room_id = %s", [room_id])
+            if cursor.rowcount <= 0:
+                return []
+
+            messages = []
+            for record in cursor:
+                user = self.get_user(record[2])
+
+                if user is not None:
+                    msg = {
+                        "sender": record[2],
+                        "sender_name": user.get_username(),
+                        "content": record[4],
+                        "date": str(record[5])
+                    }
+                    messages.append(msg)
+
+            self.connection.commit()
+            return messages
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return []
         finally:
             if cursor and not cursor.closed:
                 cursor.close()
@@ -336,6 +427,27 @@ class DatabaseManager(object):
             if cursor and not cursor.closed:
                 cursor.close()
 
+    def create_personal_chat_room(self, user1: int, user2: int) -> bool:
+        """
+        Create a new personal chat room between the two given users.
+        :param user1: The first user
+        :param user2: The second user
+        :return: Whether the room could be made or not
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("INSERT INTO personal_rooms(user_1, user_2) VALUES (%s, %s)", [min(user1, user2), max(user1, user2)])
+            self.connection.commit()
+            return True
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return False
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
     def post_announcement(self, group: int, poster: int, message: str):
         """
         Post a new announcement to the given group.
@@ -455,7 +567,7 @@ class DatabaseManager(object):
 
             self.connection.commit()
             print("Created group with ID: " + str(new_id[0]))
-            return Group(new_id[0], name, desc, owner, new_id[1])
+            return Group(new_id[0], name, desc, owner, "", new_id[1])
         except pg.Error as ex:
             self.connection.rollback()
             print(ex)
@@ -478,7 +590,7 @@ class DatabaseManager(object):
                 return None
 
             g = cursor.fetchone()
-            group = Group(g[0], g[1], g[2], g[3], g[4])
+            group = Group(g[0], g[1], g[2], g[3], g[5], g[4])
             self.connection.commit()
             return group
         except pg.Error as ex:
@@ -501,11 +613,64 @@ class DatabaseManager(object):
 
             groups = []
             for record in cursor:
-                group = Group(record[0], record[1], record[2], record[3], record[4])
+                group = Group(record[0], record[1], record[2], record[3], record[5], record[4])
                 groups.append(group)
 
             self.connection.commit()
             return groups
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return []
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
+    def get_personal_chat_room(self, room_id: int) -> tuple | None:
+        """
+        Get a personal chat room by its id.
+        :param room_id: The ID of the room
+        :return: A Room object
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT * FROM personal_rooms WHERE id = %s", [room_id])
+
+            if cursor.rowcount <= 0:
+                self.connection.commit()
+                return None
+
+            record = cursor.fetchone()
+            room = (record[0], record[1], record[2])
+            self.connection.commit()
+            return room
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return None
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
+    def get_personal_rooms_by_user(self, user_id: int) -> list[tuple]:
+        """
+        Get a list of personal rooms a user is a part of.
+        :param user_id: The ID of the user
+        :return: List of PersonalRoom objects
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT * FROM personal_rooms WHERE user_1 = %s OR user_2 = %s", [user_id, user_id])
+
+            rooms = []
+            for record in cursor:
+                room = (record[0], record[1], record[2])
+                rooms.append(room)
+
+            self.connection.commit()
+            return rooms
         except pg.Error as ex:
             self.connection.rollback()
             print(ex)
@@ -562,6 +727,27 @@ class DatabaseManager(object):
             if cursor and not cursor.closed:
                 cursor.close()
 
+    def get_average_rating(self, group_id: int) -> int:
+        """
+        Get a group's average rating.
+        :param group_id: The ID of the group
+        :return: The average rating
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT AVG(rating) FROM group_rating WHERE group_id = %s", [group_id])
+            res = cursor.fetchone()[0]
+            self.connection.commit()
+            return res
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return 0
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
     def join_group(self, user_id: int, group_id: int) -> bool:
         """
         Join the group with the given user.
@@ -582,6 +768,68 @@ class DatabaseManager(object):
             self.connection.rollback()
             print(ex)
             return False
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
+    def rate_group(self, user_id: int, group_id: int, rating: int) -> bool:
+        """
+        Rate the group with the given user.
+        :param user_id: The user rating
+        :param group_id: The group to rate
+        :param rating: The rating of the group
+        :return: True if the operation was successful, false otherwise
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT * FROM group_rating WHERE rater = %s AND group_id = %s",
+                           [user_id, group_id])
+
+            # Update the rating
+            if cursor.rowcount > 0:
+                self.connection.commit()
+                cursor.execute("UPDATE group_rating SET rating = %s WHERE rater = %s AND group_id = %s",
+                               [rating, user_id, group_id])
+                self.connection.commit()
+                return True
+
+            cursor.execute("INSERT INTO group_rating(rater, group_id, rating) VALUES (%s, %s, %s)",
+                           [user_id, group_id, rating])
+            self.connection.commit()
+            return True
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return False
+        finally:
+            if cursor and not cursor.closed:
+                cursor.close()
+
+    def get_rating(self, user_id: int, group_id: int) -> int:
+        """
+        Rate the group with the given user.
+        :param user_id: The user rating
+        :param group_id: The group to rate
+        :return: True if the operation was successful, false otherwise
+        """
+        cursor = None
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT rating FROM group_rating WHERE rater = %s AND group_id = %s",
+                           [user_id, group_id])
+
+            # Update the rating
+            if cursor.rowcount <= 0:
+                self.connection.commit()
+                return 0
+
+            self.connection.commit()
+            return cursor.fetchone()[0]
+        except pg.Error as ex:
+            self.connection.rollback()
+            print(ex)
+            return 0
         finally:
             if cursor and not cursor.closed:
                 cursor.close()
@@ -707,20 +955,21 @@ class DatabaseManager(object):
             if cursor and not cursor.closed:
                 cursor.close()
 
-    def insert_chat_personal(self, sender_id: int, receiver_id: int, content: str) -> int:
+    def insert_chat_personal(self, room_id: int, content: str, sender_id: int, receiver_id: int) -> int:
         """
         Inserts a chat into the specified personal chat
-        :param sender_id: The id of the sender of the message
-        :param receiver_id: The id of the receiver of the message
+        :param room_id: The id of the room
         :param content: The contents of the message
+        :param sender_id: The ID of the sender
+        :param receiver_id: The ID of the receiver
         :return: The ID of the new chat, or -1 if it was unsuccessful
         """
         cursor = None
         try:
             cursor = self.connection.cursor()
             
-            cursor.execute("INSERT INTO personal_chat(content, sender_id, receiver_id) VALUES(%s, %s, %s) RETURNING id",
-                           [content, sender_id, receiver_id])
+            cursor.execute("INSERT INTO personal_chat(content, room_id, sender_id, receiver_id) VALUES(%s, %s, %s, %s) RETURNING id",
+                           [content, int(room_id) - 0x0fffffff, sender_id, receiver_id])
 
             new_id = cursor.fetchone()
             if new_id[0] < 0:

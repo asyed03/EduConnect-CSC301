@@ -20,6 +20,29 @@ h2 {
       margin-bottom: 2rem;
       border-bottom: 1px solid #cccccc8c;
 
+      .add-new {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+        button {
+          background: transparent;
+          border: none;
+          margin-top: 0.5rem;
+
+          svg {
+            transition: 0.2s;
+
+            &:hover {
+              cursor: pointer;
+              transform: scale(1.05);
+              transition: 0.2s;
+            }
+          }
+        }
+      }
+
+
       input {
         background-color: #F3F4F6;
         padding: 1rem 2rem;
@@ -32,13 +55,11 @@ h2 {
         font-family: 'Poppins', sans-serif;
 
         &:hover {
-          width: 80%;
           transition: 0.2s;
         }
 
         &:focus-visible {
           outline: 2px solid rgba(128, 128, 128, 0.185);
-          width: 80%;
         }
       }
     }

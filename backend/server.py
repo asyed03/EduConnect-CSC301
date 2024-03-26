@@ -14,6 +14,7 @@ PORT = 8001
 
 def create_server():
     app = Flask(__name__)
+    app.config['UPLOAD_FOLDER'] = '/static'
     CORS(app)
     return app
 
@@ -23,6 +24,8 @@ def add_group_endpoints(server: Flask, request_manager: GroupRequestManager):
     server.add_url_rule("/groups/user/<id>", "user-group-get", methods=["GET"], view_func=request_manager.get_user_groups)
     server.add_url_rule("/groups", "group-get-all", methods=["GET"], view_func=request_manager.get_all_groups)
     server.add_url_rule("/groups/join/<id>", "group-join", methods=["POST"], view_func=request_manager.post_join_group)
+    server.add_url_rule("/groups/rate/<id>", "group-rate", methods=["POST"], view_func=request_manager.post_rate_group)
+    server.add_url_rule("/groups/ratings/<group_id>/<user_id>", "group-get-rating-user", methods=["GET"], view_func=request_manager.get_user_rating)
     server.add_url_rule("/groups/<id>", "group-get", methods=["GET"], view_func=request_manager.get_group)
 
 
@@ -38,7 +41,11 @@ def add_user_endpoints(server: Flask, request_manager: UserRequestManager):
     server.add_url_rule("/users/<id>", "users-get", methods=["GET"], view_func=request_manager.get_user)
     server.add_url_rule("/users/update", "users-update", methods=["POST"], view_func=request_manager.post_user_update)
     server.add_url_rule("/users/update/password", "users-update-password", methods=["POST"], view_func=request_manager.post_user_change_password)
+    server.add_url_rule("/users/update/picture", "users-update-picture", methods=["POST"], view_func=request_manager.post_user_change_picture)
     server.add_url_rule("/chat/group/<id>", "get-group-chat", methods=["GET"], view_func=request_manager.get_group_chat)
+    server.add_url_rule("/chat/personal/rooms/<id>", "get-personal-rooms", methods=["GET"], view_func=request_manager.get_personal_rooms)
+    server.add_url_rule("/chat/personal/<id>", "get-personal-chat", methods=["GET"], view_func=request_manager.get_personal_chat)
+    server.add_url_rule("/chat/personal/create", "add-personal-chat", methods=["POST"], view_func=request_manager.post_personal_room)
 
 
 def add_announcement_endpoints(server: Flask, request_manager: AnnouncementRequestManager, comment_request_manager: AnnouncementCommentRequestManager):
@@ -55,6 +62,7 @@ def add_announcement_endpoints(server: Flask, request_manager: AnnouncementReque
 
 def add_internal_endpoints(server: Flask, request_manager: InternalRequestManager):
     server.add_url_rule("/internal/chat/group", "add-chat-group", methods=["POST"], view_func=request_manager.post_chat_group)
+    server.add_url_rule("/internal/chat/personal", "add-chat-personal", methods=["POST"], view_func=request_manager.post_chat_personal)
 
 
 if __name__ == "__main__":

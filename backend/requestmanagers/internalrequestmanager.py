@@ -27,7 +27,12 @@ class InternalRequestManager(RequestManager):
         :return: If the operation was successful
         """
         data = request.get_json()
-        if DatabaseManager.instance().insert_chat_personal(data["sender"], data["receiver"], data["content"]):
+        room = DatabaseManager.instance().get_personal_chat_room(int(data["group"]) - 0x0fffffff)
+        if not room:
+            return self._respond(status_code=404)
+
+        receiver = room[1] if int(data["sender"]) != room[1] else room[2]
+        if DatabaseManager.instance().insert_chat_personal(data["group"], data["content"], data["sender"], receiver):
             return self._respond(status_code=200)
 
         return self._respond(status_code=500)
