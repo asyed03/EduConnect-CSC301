@@ -3,7 +3,7 @@ class User(object):
     Representation of a user in the database.
     """
 
-    def __init__(self, identifier: int, email: str, username: str, password: str, picture: str, nightmode):
+    def __init__(self, identifier: int, email: str, username: str, password: str, picture: str, nightmode: bool):
         self.identifier = identifier
         self.email = email
         self.username = username

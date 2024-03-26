@@ -45,7 +45,7 @@
   .course-details {
     width: 70%;
     margin: 2rem auto;
-    background-color: white;
+    background-color: var(--bg-color-secondary);
     padding: 2rem;
     border-radius: 10px;
     outline: 1px solid rgba(0, 0, 0, 0.185);
@@ -58,28 +58,6 @@
     flex-direction: column;
     justify-content: start;
     align-items: center;
-  }
-
-  /* Night mode styles */
-  &.night-mode {
-    background-color: #333;
-    color: #fff;
-
-    .course-header {
-      background-color: #222;
-      color: #fff;
-    }
-
-    .course-details,
-    .course-announcements {
-      border-color: #555;
-      color: #333;
-    }
-
-    .create-btn {
-      background-color: #555;
-      color: #fff;
-    }
   }
 }
 

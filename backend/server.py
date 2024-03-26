@@ -86,5 +86,5 @@ if __name__ == "__main__":
     add_internal_endpoints(server, internal_request_manager)
 
     DatabaseManager.instance()  # Initial call to .instance() will setup the database
-    server.run(debug=True, port=PORT)
+    #server.run(debug=True, port=PORT)
     server.run(port=PORT)

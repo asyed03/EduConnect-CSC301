@@ -5,11 +5,21 @@
   line-height: 1.5;
   font-weight: 400;
 
+  --bg-color: #F8F9FB;
+  --bg-color-secondary: white;
+  --bg-color-tertiary: #f3e3e660;
+  --text-color: black;
+  --outline-color: green;
+  --fill-color: gray;
+  --btn-color: rgba(0, 128, 0, 0.082);
+
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #F8F9FB;
+  background-color: var(--bg-color);
+
+  color: var(--text-color);
 }
 
 a {

@@ -26,7 +26,7 @@ class DatabaseManager(object):
 
     def _initialize(self):
         try:
-            self.connection = pg.connect("user=postgres password=qwerty")
+            self.connection = pg.connect("user=postgres password=admin")
             self._setup_database()
             return True
         except pg.Error as ex:
@@ -81,7 +81,7 @@ class DatabaseManager(object):
 
             self.connection.commit()
             print("Created user with ID: " + str(new_id[0]))
-            return User(new_id[0], email, username, password, '')
+            return User(new_id[0], email, username, password, '', False)
         except pg.Error as ex:
             self.connection.rollback()
             print(ex)
@@ -105,7 +105,7 @@ class DatabaseManager(object):
                 return None
 
             r = cursor.fetchone()
-            user = User(int(r[0]), r[2], r[1], r[3], r[4])
+            user = User(int(r[0]), r[2], r[1], r[3], r[4], r[5])
             self.connection.commit()
             return user
         except pg.Error as ex:
@@ -252,7 +252,7 @@ class DatabaseManager(object):
                 return None
 
             r = cursor.fetchone()
-            user = User(int(r[0]), r[2], r[1], r[3], r[4])
+            user = User(int(r[0]), r[2], r[1], r[3], r[4], r[5])
             self.connection.commit()
             return user
         except pg.Error as ex:
@@ -277,7 +277,7 @@ class DatabaseManager(object):
                 return None
 
             r = cursor.fetchone()
-            user = User(int(r[0]), r[2], r[1], r[3], r[4])
+            user = User(int(r[0]), r[2], r[1], r[3], r[4], r[5])
             self.connection.commit()
             return user
         except pg.Error as ex:

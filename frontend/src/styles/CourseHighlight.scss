@@ -1,10 +1,10 @@
 .course-highlight {
   display: flex;
   align-items: center;
-  background-color: #f3e3e660;
+  background-color: var(--bg-color-tertiary);
   border-radius: 10px;
   padding: 1.5rem;
-  color: #070220;
+  color: var(--text-color);
   justify-content: space-between;
   transition: 0.2s;
 

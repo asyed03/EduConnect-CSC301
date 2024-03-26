@@ -1,6 +1,6 @@
 .left-menu {
   height: 100vh;
-  background-color: white;
+  background-color: var(--bg-color-secondary);
   position: fixed;
   top: 0;
   width: 35px;
@@ -21,17 +21,18 @@
     display: flex;
     align-items: center;
     margin-top: 3rem;
-    color: black;
+    color: var(--text-color);
     overflow: hidden;
     white-space: nowrap;
 
     svg {
       transition: 0.2s;
       min-width: 32px;
+      fill: var(--fill-color);
     }
 
     &:hover svg {
-      fill: green;
+      fill: var(--outline-color);
       transform: scale(1.05);
       transition: 0.2s;
     }
