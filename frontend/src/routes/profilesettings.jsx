@@ -137,7 +137,7 @@ function ProfileSettings() {
     <>
       <Menu />
 
-      <div className={`profile ${nightMode ? 'night-mode' : ''}`}> {/* 4. Apply night mode styles */}
+      <div className={`profile ${nightMode ? 'night-mode' : ''}`}> {/* Apply night mode styles */}
         <div className="navigation">
           <h3>Profile Settings</h3>
           <a href="#personal">Personal Information</a>

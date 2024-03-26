@@ -48,11 +48,44 @@
     }
   }
 
-  .night-mode {
-    background-color: #1a1a1a;
-    color: #ddd;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  /* Night mode styles */
+  &.night-mode {
+    background-color: #333;
+    color: #fff;
+
+    .group-main {
+      .create-btn {
+        background-color: #555;
+        color: #fff;
+      }
+
+      .active-courses {
+        h2 {
+          color: #fff;
+        }
+
+        .course-block {
+          .course-highlight {
+            background-color: #444;
+            border-color: #666;
+            color: #fff;
+          }
+        }
+      }
+    }
+
+    .group-events {
+      h2 {
+        color: #fff;
+      }
+
+      .upcoming-events {
+        .upcoming-event {
+          background-color: #444;
+          border-color: #666;
+          color: #fff;
+        }
+      }
+    }
   }
 }
