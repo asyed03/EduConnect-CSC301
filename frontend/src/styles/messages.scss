@@ -11,8 +11,8 @@ h2 {
 
   .rooms {
     flex-grow: 1;
-    border-right: 1px solid #cccccc8c;
-    background-color: white;
+    border-right: 1px solid var(--bg-color-tertiary);
+    background-color: var(--bg-color-secondary);
     box-shadow: rgba(100, 100, 111, 0.1) 0px 7px 29px 0px;
 
     .roomsHeader {
@@ -31,6 +31,7 @@ h2 {
           margin-top: 0.5rem;
 
           svg {
+            fill: var(--fill-color);
             transition: 0.2s;
 
             &:hover {
@@ -44,7 +45,7 @@ h2 {
 
 
       input {
-        background-color: #F3F4F6;
+        background-color: var(--bg-color);
         padding: 1rem 2rem;
         border: none;
         position: relative;
@@ -72,7 +73,7 @@ h2 {
 
       &:hover,
       &.selected {
-        background-color: #0ab28b15;
+        background-color: var(--bg-color-tertiary);
         transition: 0.2s;
       }
 
@@ -118,9 +119,11 @@ h2 {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    background-color: var(--bg-color-secondary);
+    padding-bottom: 1rem;
 
     .selectedRoomHeader {
-      background-color: white;
+      background-color: var(--bg-color-secondary);
       padding: 0 1.5rem;
       box-shadow: rgba(100, 100, 111, 0.05) 0px 7px 29px 0px;
     }
@@ -151,6 +154,7 @@ h2 {
           border-radius: 50px 100px 0px 50px;
           padding-right: 2rem;
           width: max-content;
+          max-width: 20vw;
 
           .sender {
             color: rgba(0, 0, 0, 0.336);
@@ -158,9 +162,10 @@ h2 {
         }
 
         &.received {
-          background-color: white;
+          background-color: var(--bg-color-tertiary);
           border-radius: 100px 50px 50px 0px;
           width: max-content;
+          max-width: 20vw;
           padding-left: 2rem;
 
           .sender {
@@ -181,8 +186,9 @@ h2 {
         flex-grow: 1;
         font-family: 'Poppins', sans-serif;
         padding-left: 3rem;
-        border: 1px solid #cccccc8c;
+        border: 1px solid var(--bg-color-secondary);
         border-radius: 50px;
+        background-color: var(--bg-color);
       }
 
       button {
@@ -196,4 +202,6 @@ h2 {
       }
     }
   }
+
+  // add styling here
 }

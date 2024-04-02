@@ -12,6 +12,7 @@ function ProfileSettings() {
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [picture, setPicture] = useState("");
+  const [nightMode, setNightMode] = useState(false);
 
   async function fetchData() {
     try {
@@ -20,6 +21,7 @@ function ProfileSettings() {
       setEmail(data.email);
       setUsername(data.username);
       setPicture(`http://127.0.0.1:8001/${data.picture}`);
+      setNightMode(data.nightmode);
 
       const eventsResponse = await fetch(`http://127.0.0.1:8001/events/${sessionStorage.getItem("userid")}`);
       const eventsData = await eventsResponse.json();
@@ -129,7 +131,7 @@ function ProfileSettings() {
     <>
       <Menu />
 
-      <div className="profile">
+      <div className={`profile ${nightMode ? 'night-mode' : ''}`}> {/* Apply night mode styles */}
         <div className="navigation">
           <h3>Profile Settings</h3>
           <a href="#personal">Personal Information</a>

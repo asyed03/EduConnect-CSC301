@@ -42,6 +42,7 @@ def add_user_endpoints(server: Flask, request_manager: UserRequestManager):
     server.add_url_rule("/users/update", "users-update", methods=["POST"], view_func=request_manager.post_user_update)
     server.add_url_rule("/users/update/password", "users-update-password", methods=["POST"], view_func=request_manager.post_user_change_password)
     server.add_url_rule("/users/update/picture", "users-update-picture", methods=["POST"], view_func=request_manager.post_user_change_picture)
+    server.add_url_rule("/users/toggle-night-mode", "toggle-night-mode", methods=["POST"], view_func=request_manager.post_toggle_night_mode)
     server.add_url_rule("/chat/group/<id>", "get-group-chat", methods=["GET"], view_func=request_manager.get_group_chat)
     server.add_url_rule("/chat/personal/rooms/<id>", "get-personal-rooms", methods=["GET"], view_func=request_manager.get_personal_rooms)
     server.add_url_rule("/chat/personal/<id>", "get-personal-chat", methods=["GET"], view_func=request_manager.get_personal_chat)
@@ -85,5 +86,5 @@ if __name__ == "__main__":
     add_internal_endpoints(server, internal_request_manager)
 
     DatabaseManager.instance()  # Initial call to .instance() will setup the database
-    # server.run(debug=True, port=PORT)
+    #server.run(debug=True, port=PORT)
     server.run(port=PORT)

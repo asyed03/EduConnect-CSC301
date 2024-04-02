@@ -22,6 +22,7 @@
         padding: 1rem;
         margin: 0.5rem 0;
         transition: 0.2s;
+        background-color: var(--bg-color-secondary);
 
         &:hover {
           transform: scale(1.01);
@@ -52,7 +53,7 @@
 
     .catchphrase {
       text-align: left;
-      background-color: white;
+      background-color: var(--bg-color-secondary);
       border-radius: 20px;
       width: 50%;
       margin: auto;

@@ -122,7 +122,8 @@ class GroupRequestManager(RequestManager):
         res = []
         for group in groups:
             enrolled = DatabaseManager.instance().get_group_enrolled(group.get_id())
-            avg_rating = math.floor(DatabaseManager.instance().get_average_rating(group.get_id()))
+            avg = DatabaseManager.instance().get_average_rating(group.get_id())
+            avg_rating = math.floor(avg) if avg is not None else 0
             g = {
                 "id": group.get_id(),
                 "title": group.get_name(),
@@ -152,7 +153,8 @@ class GroupRequestManager(RequestManager):
         res = []
         for group in groups:
             enrolled = DatabaseManager.instance().get_group_enrolled(group.get_id())
-            avg_rating = math.floor(DatabaseManager.instance().get_average_rating(group.get_id()))
+            avg = DatabaseManager.instance().get_average_rating(group.get_id())
+            avg_rating = math.floor(avg) if avg is not None else 0
             g = {
                 "id": group.get_id(),
                 "title": group.get_name(),

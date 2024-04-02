@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS edu_user (
     email text NOT NULL,
     password text NOT NULL,
     picture text NOT NULL DEFAULT 'static/__default_pic.jpg',
+    nightmode BOOLEAN DEFAULT FALSE,
     PRIMARY KEY(id)
 );
 

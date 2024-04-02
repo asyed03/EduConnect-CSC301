@@ -11,18 +11,25 @@ const Messages = () => {
   const [newMessage, setNewMessage] = useState('');
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [newChatText, setNewChatText] = useState('');
+  const [nightMode, setNightMode] = useState(false);
 
   async function fetchRooms() {
     try {
       // Find enrolled courses
       const coursesResponse = await fetch(`http://127.0.0.1:8001/groups/user/${sessionStorage.getItem("userid")}`);
       const coursesData = await coursesResponse.json();
+      setRooms(coursesData);
 
       const personalResponse = await fetch(`http://127.0.0.1:8001/chat/personal/rooms/${sessionStorage.getItem("userid")}`);
       const personalData = await personalResponse.json();
 
       const final = coursesData.concat(personalData)
       setRooms(final);
+      
+      // Get data for users (to initialize nightmode)
+      const userResponse = await fetch(`http://127.0.0.1:8001/users/${sessionStorage.getItem("userid")}`);
+      const userData = await userResponse.json();
+      setNightMode(userData.nightmode);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -172,12 +179,12 @@ const Messages = () => {
   return (
     <>
       <Menu />
-      <div className="messages-container">
+      <div className={`messages-container ${nightMode ? 'night-mode' : ''}`}> {/* Apply night mode styles */}
         <div className="rooms">
           <div className='roomsHeader'>
             <h2>Messaging</h2>
             <form onSubmit={addNewChat} className="add-new">
-              <input type="text" placeholder="Search chatroom" onChange={(e) => setNewChatText(e.target.value)} value={newChatText}/>
+              <input type="text" placeholder="Message a user" onChange={(e) => setNewChatText(e.target.value)} value={newChatText}/>
               <button type='submit'>
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="gray" className="bi bi-person-plus" viewBox="0 0 16 16">
                   <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H1s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C9.516 10.68 8.289 10 6 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z" />
